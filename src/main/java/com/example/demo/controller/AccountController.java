@@ -57,13 +57,13 @@ public class AccountController {
 
     //Method Forgot Password
     @GetMapping("ForgotPassword")
-    public String form(Model model){
+    public String formForgot(Model model){
     
         return "account/ForgotPassword";
     }
 
     @PostMapping("check")
-    public String CheckEmail(Integer empID, Model model, @RequestParam("email") String email) {
+    public String CheckEmail(Integer empID, Model model) {
         // public String CheckEmail(Integer empID, Model model, @RequestParam("email") String email) 
         empID = 1;
         boolean employeeExists = employeeRepository.findById(empID).isPresent();
@@ -76,7 +76,7 @@ public class AccountController {
         return "account/ForgotPassword";
     }
 
-    @PostMapping("update")
+    @PostMapping("save")
     public String save(User user, Role role) { 
         role.setId(4);
         user.setRole(role);
