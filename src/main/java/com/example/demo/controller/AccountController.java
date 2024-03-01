@@ -40,6 +40,7 @@ public class AccountController {
         return "account/register";
     }
 
+    //localhost:/account/save
     @PostMapping("save")
     public String save(Employee employee, User user){
         employeeRepository.save(employee);
