@@ -60,8 +60,8 @@ public class AccountController {
     public String formchange( Model model) {
         
     
-            model.addAttribute("employee", employeeRepository.findById(1).orElse(null));
-            model.addAttribute("user", userRepository.findById(1).orElse(null));
+            model.addAttribute("employee", employeeRepository.findById(2).orElse(null));
+            model.addAttribute("user", userRepository.findById(2).orElse(null));
         
         return "account/formchangepassword";
     }
@@ -72,13 +72,13 @@ public class AccountController {
     
 
 
-        Boolean resultemployee = employeeRepository.findById(1).isPresent();
+        Boolean resultemployee = employeeRepository.findById(2).isPresent();
        
         if (!resultemployee) {
             return "redirect:/account";
         }
 
-        Boolean  resultuser = userRepository.findById(1).isPresent();
+        Boolean  resultuser = userRepository.findById(2).isPresent();
 
         user.setPassword(newpassword);
         user.getPassword();
