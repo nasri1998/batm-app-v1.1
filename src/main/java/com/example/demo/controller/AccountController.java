@@ -32,6 +32,7 @@ public class AccountController {
         return "account/index";
     }
 
+    //localhost://account/register
     @GetMapping("register")
     public String form(Model model){
         model.addAttribute("employee", new Employee());
