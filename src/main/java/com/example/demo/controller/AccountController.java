@@ -54,4 +54,39 @@ public class AccountController {
         return "redirect:/account";
     }
     
+
+    //Method Forgot Password
+    @GetMapping("ForgotPassword")
+    public String form(Model model){
+    
+        return "account/ForgotPassword";
+    }
+
+    @PostMapping("check")
+    public String CheckEmail(Integer empID, Model model, @RequestParam("email") String email) {
+        // public String CheckEmail(Integer empID, Model model, @RequestParam("email") String email) 
+        empID = 1;
+        boolean employeeExists = employeeRepository.findById(empID).isPresent();
+        model.addAttribute("user", new User());
+        model.addAttribute("emp", new Employee());
+
+        if (employeeExists) {
+            return "account/NewPassword";
+        }
+        return "account/ForgotPassword";
+    }
+
+    @PostMapping("update")
+    public String save(User user, Role role) { 
+        role.setId(4);
+        user.setRole(role);
+        user.setId(1);
+        userRepository.save(user);
+
+        Boolean result = userRepository.findById(1).isPresent();
+        if (result) {
+            return "account/ForgotPassword";
+        }
+        return "account/NewPassword";
+    }
 }
