@@ -15,6 +15,7 @@ import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 
 @Controller
+//http://localhost:8080/account
 @RequestMapping("account")
 public class AccountController {
     @Autowired
@@ -32,7 +33,7 @@ public class AccountController {
         return "account/index";
     }
 
-    //localhost://account/register
+    //http://localhost:8080/account/register
     @GetMapping("register")
     public String form(Model model){
         model.addAttribute("employee", new Employee());
@@ -40,7 +41,7 @@ public class AccountController {
         return "account/register";
     }
 
-    //localhost:/account/save
+    //http://localhost:8080/account/save
     @PostMapping("save")
     public String save(Employee employee, User user){
         employeeRepository.save(employee);
