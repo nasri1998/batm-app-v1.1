@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
@@ -53,5 +54,39 @@ public class AccountController {
         }
         return "redirect:/account";
     }
+
+
+    @GetMapping("formchangepassword")
+    public String formchange( Model model) {
+        
     
+            model.addAttribute("employee", employeeRepository.findById(1).orElse(null));
+            model.addAttribute("user", userRepository.findById(1).orElse(null));
+        
+        return "account/formchangepassword";
+    }
+    
+    @PostMapping("check")
+    public String check(@RequestParam(name = "newpassword")String newpassword,Employee employee, User user) {
+
+    
+
+
+        Boolean resultemployee = employeeRepository.findById(1).isPresent();
+       
+        if (!resultemployee) {
+            return "redirect:/account";
+        }
+
+        Boolean  resultuser = userRepository.findById(1).isPresent();
+
+        user.setPassword(newpassword);
+        user.getPassword();
+        userRepository.save(user);
+        if (!resultuser) {
+            return "redirect:/account";
+        }
+        return "redirect:/account/formchangepassword";
+
+    }
 }
