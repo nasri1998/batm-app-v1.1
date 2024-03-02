@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.demo.dto.ForgotPassword;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -56,37 +57,23 @@ public class AccountController {
     
 
     //Method Forgot Password
-    @GetMapping("ForgotPassword")
-    public String formForgot(Model model){
-    
-        return "account/ForgotPassword";
+    @GetMapping("forgot-password")
+    public String forgot(Model model){
+        model.addAttribute("forgotPassword", new ForgotPassword());
+        return "account/forgot-password";
     }
 
-    @PostMapping("check")
-    public String CheckEmail(Integer empID, Model model) {
-        // public String CheckEmail(Integer empID, Model model, @RequestParam("email") String email) 
-        empID = 1;
-        boolean employeeExists = employeeRepository.findById(empID).isPresent();
-        model.addAttribute("user", new User());
-        model.addAttribute("emp", new Employee());
+    @PostMapping("forgot-password/check")
+    public String CheckEmail(ForgotPassword forgotPassword) {
+        String emailExist = employeeRepository.findEmail(forgotPassword.getEmail());
+        if (emailExist.equals(forgotPassword.getEmail())) {
+            User user = userRepository.findUserByEmail(emailExist);
+            user.setPassword(forgotPassword.getPassword());
 
-        if (employeeExists) {
-            return "account/NewPassword";
+            userRepository.save(user);
+            return "account/forgot-password";
         }
-        return "account/ForgotPassword";
+        return "account/forgot-password";
     }
 
-    @PostMapping("save")
-    public String save(User user, Role role) { 
-        role.setId(4);
-        user.setRole(role);
-        user.setId(1);
-        userRepository.save(user);
-
-        Boolean result = userRepository.findById(1).isPresent();
-        if (result) {
-            return "account/ForgotPassword";
-        }
-        return "account/NewPassword";
-    }
 }
