@@ -88,7 +88,7 @@ public class AccountController {
             return "account/index";
         }
         if (newpassword == changepasword.getPassword()) {
-            model.addAttribute("error", "password baru anda tidak boleh sama dengan password baru");
+            model.addAttribute("error", "password baru anda tidak boleh sama dengan password lama anda");
             return "account/formchangepassword";
         }
        changepasword.setPassword(newpassword);
