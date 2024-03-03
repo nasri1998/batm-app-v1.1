@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.dto.changepasword;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -59,29 +60,40 @@ public class AccountController {
     @GetMapping("formchangepassword")
     public String formchange( Model model) {
         
+        changepasword changepasword = new changepasword();
+
+        
+
+        String email = employeeRepository.findbyidemail(1);
+        String password = userRepository.findbyidPassword(1);
+        changepasword.setEmail(email);
+        changepasword.setPassword(password);
+
     
-            model.addAttribute("employee", employeeRepository.findById(2).orElse(null));
-            model.addAttribute("user", userRepository.findById(2).orElse(null));
+        model.addAttribute("changepassword", changepasword);
+        // model.addAttribute("employee", employeeRepository.findById(1).orElse(null));
+        // model.addAttribute("user", userRepository.findById(1).orElse(null));
+
         
         return "account/formchangepassword";
     }
     
     @PostMapping("check")
-    public String check(@RequestParam(name = "newpassword")String newpassword,Employee employee, User user) {
+    public String check(changepasword changepasword,Employee employee, User user) {
 
     
 
 
-        Boolean resultemployee = employeeRepository.findById(2).isPresent();
+        Boolean resultemployee = employeeRepository.findById(1).isPresent();
        
         if (!resultemployee) {
             return "redirect:/account";
         }
 
-        Boolean  resultuser = userRepository.findById(2).isPresent();
+        Boolean  resultuser = userRepository.findById(1).isPresent();
 
-        user.setPassword(newpassword);
-        user.getPassword();
+        user.setPassword(changepasword.getPassword());
+      
         userRepository.save(user);
         if (!resultuser) {
             return "redirect:/account";
@@ -90,24 +102,29 @@ public class AccountController {
 
     }
 
-    //Login
-        //http://localhost:8082/account/form
-        @GetMapping("login")
-        public String formLogin(Model model){
-            model.addAttribute("employee", new Employee());
-            model.addAttribute("user", new User());
-            return "account/login";
-        }
-    
-        @PostMapping("save")
-        public String save(User user, Employee employee){
-            user.setId(1); // set user id secara manual 
-            employee.setId(user.getId());
-    
-            employeeRepository.save(employee);
-    
-            userRepository.save(user);
-    
-            return "redirect:/account";
-        }
+   
 }
+
+
+// 
+
+
+// return "account/formchangepassword";
+
+// String Cekemail =employeeRepository.findbyidemail(1);
+// if (Cekemail == "" || Cekemail == null) {
+//     return "account/index";            
+// }
+
+// String cekpassword = userRepository.findbyidPassword(1);
+
+// if (cekpassword == "" || cekpassword == null) {
+// return "account/index";  
+// }
+
+// changepassword.setEmail(Cekemail);
+// changepassword.setPassword(cekpassword);
+
+// System.out.println(changepassword.getEmail()); 
+
+// return "account/formchangepassword";
