@@ -29,21 +29,21 @@ public class AccountController {
     private RoleRepository roleRepository;
 
     @GetMapping
-    public String index(Model model){
-        
+    public String index(Model model) {
+
         return "account/index";
     }
 
-    //localhost://account/register
+    // localhost://account/register
     @GetMapping("register")
-    public String form(Model model){
+    public String form(Model model) {
         model.addAttribute("employee", new Employee());
         model.addAttribute("user", new User());
         return "account/register";
     }
 
     @PostMapping("save")
-    public String save(Employee employee, User user){
+    public String save(Employee employee, User user) {
         employeeRepository.save(employee);
         Boolean result = employeeRepository.findById(employee.getId()).isPresent();
         if (result) {
@@ -56,31 +56,27 @@ public class AccountController {
         return "redirect:/account";
     }
 
-
     @GetMapping("formchangepassword")
-    public String formchange( Model model) {
-        
+    public String formchange(Model model) {
+
         ChangePassword changePassword = new ChangePassword();
         String email = employeeRepository.findByIdEmail(1);
 
-    
         String password = userRepository.findbyidPassword(1);
         changePassword.setEmail(email);
         changePassword.setPassword(password);
 
-    
         if (email == "" || password == "") {
             return "redirect: account/register";
         }
         model.addAttribute("changePassword", changePassword);
-    
 
-        
         return "account/formchangepassword";
     }
-    
+
     @PostMapping("check")
-    public String check(@RequestParam(name = "newpassword")String newpassword,ChangePassword changepasword ,Model model) {
+    public String check(@RequestParam(name = "newpassword") String newpassword, ChangePassword changepasword,
+            Model model) {
 
         User user = userRepository.FindbyEmail(changepasword.getEmail());
 
@@ -91,46 +87,42 @@ public class AccountController {
             model.addAttribute("error", "password baru anda tidak boleh sama dengan password lama anda");
             return "account/formchangepassword";
         }
-       changepasword.setPassword(newpassword);
+        changepasword.setPassword(newpassword);
 
-       if(newpassword == "" || newpassword == null){
+        if (newpassword == "" || newpassword == null) {
 
-        return "redirect:/account/formchangepassword";
+            return "redirect:/account/formchangepassword";
 
-       }
+        }
 
-       user.setPassword(changepasword.getPassword());
+        user.setPassword(changepasword.getPassword());
 
         userRepository.save(user);
 
-    
         return "redirect:/account/formchangepassword";
 
     }
 
-   
 }
 
-
-// 
-
+//
 
 // return "account/formchangepassword";
 
 // String Cekemail =employeeRepository.findbyidemail(1);
 // if (Cekemail == "" || Cekemail == null) {
-//     return "account/index";            
+// return "account/index";
 // }
 
 // String cekpassword = userRepository.findbyidPassword(1);
 
 // if (cekpassword == "" || cekpassword == null) {
-// return "account/index";  
+// return "account/index";
 // }
 
 // changepassword.setEmail(Cekemail);
 // changepassword.setPassword(cekpassword);
 
-// System.out.println(changepassword.getEmail()); 
+// System.out.println(changepassword.getEmail());
 
 // return "account/formchangepassword";
