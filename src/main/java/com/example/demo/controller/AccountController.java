@@ -69,6 +69,9 @@ public class AccountController {
         changePassword.setPassword(password);
 
     
+        if (email == "" || password == "") {
+            return "redirect: account/register";
+        }
         model.addAttribute("changePassword", changePassword);
     
 
@@ -84,7 +87,17 @@ public class AccountController {
         if (user == null) {
             return "account/index";
         }
+
+        if (user.equals(changepasword.getEmail())) {
+            
+        }
        changepasword.setPassword(newpassword);
+
+       if(newpassword == "" || newpassword == null){
+
+        return "redirect:/account/formchangepassword";
+
+       }
 
        user.setPassword(changepasword.getPassword());
 
