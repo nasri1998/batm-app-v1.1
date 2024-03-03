@@ -88,9 +88,7 @@ public class AccountController {
             return "account/index";
         }
 
-        if (user.equals(changepasword.getEmail())) {
-            
-        }
+       
        changepasword.setPassword(newpassword);
 
        if(newpassword == "" || newpassword == null){
