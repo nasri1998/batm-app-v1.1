@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.demo.dto.Register;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -27,33 +28,35 @@ public class AccountController {
     @Autowired
     private RoleRepository roleRepository;
 
-    @GetMapping
-    public String index(Model model){
-        
-        return "account/index";
-    }
-
     //http://localhost:8080/account/register
     @GetMapping("register")
     public String form(Model model){
-        model.addAttribute("employee", new Employee());
-        model.addAttribute("user", new User());
+        model.addAttribute("register", new Register());
         return "account/register";
     }
 
-    //http://localhost:8080/account/save
-    @PostMapping("save")
-    public String save(Employee employee, User user){
-        employeeRepository.save(employee);
-        Boolean result = employeeRepository.findById(employee.getId()).isPresent();
-        if (result) {
-            user.setId(employee.getId());
-            Role role = roleRepository.findById(5).orElse(null);
-            user.setRole(role);
-            userRepository.save(user);
-            return "redirect:/account";
+    //http://localhost:8080/account/register/save
+    @PostMapping("register/save")
+    public String save(Register register){
+        String emailExist = employeeRepository.findEmail(register.getEmail());
+        if (!emailExist.equals(register.getEmail())) {
+            Employee employee = new Employee();
+            employee.setName(register.getName());
+            employee.setEmail(register.getEmail());
+            employeeRepository.save(employee);
+
+            Boolean result = employeeRepository.findById(employee.getId()).isPresent();
+            if (result) {
+                User user = new User();
+                user.setId(employee.getId());
+                user.setPassword(register.getPassword());
+                Role role = roleRepository.findById(5).orElse(null);
+                user.setRole(role);
+                userRepository.save(user);
+                return "redirect:/account/login";
+            }
         }
-        return "redirect:/account";
+        return "redirect:/account/register";
     }
     
 }
