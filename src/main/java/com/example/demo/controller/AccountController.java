@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.dto.changepasword;
+import com.example.demo.dto.ChangePassword;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -60,44 +60,37 @@ public class AccountController {
     @GetMapping("formchangepassword")
     public String formchange( Model model) {
         
-        changepasword changepasword = new changepasword();
-
-        
-
-        String email = employeeRepository.findbyidemail(1);
-        String password = userRepository.findbyidPassword(1);
-        changepasword.setEmail(email);
-        changepasword.setPassword(password);
+        ChangePassword changePassword = new ChangePassword();
+        String email = employeeRepository.findByIdEmail(1);
 
     
-        model.addAttribute("changepassword", changepasword);
-        // model.addAttribute("employee", employeeRepository.findById(1).orElse(null));
-        // model.addAttribute("user", userRepository.findById(1).orElse(null));
+        String password = userRepository.findbyidPassword(1);
+        changePassword.setEmail(email);
+        changePassword.setPassword(password);
+
+    
+        model.addAttribute("changePassword", changePassword);
+    
 
         
         return "account/formchangepassword";
     }
     
     @PostMapping("check")
-    public String check(changepasword changepasword,Employee employee, User user) {
+    public String check(@RequestParam(name = "newpassword")String newpassword,ChangePassword changepasword) {
+
+        User user = userRepository.FindbyEmail(changepasword.getEmail());
+
+        if (user == null) {
+            return "account/index";
+        }
+       changepasword.setPassword(newpassword);
+
+       user.setPassword(changepasword.getPassword());
+
+        userRepository.save(user);
 
     
-
-
-        Boolean resultemployee = employeeRepository.findById(1).isPresent();
-       
-        if (!resultemployee) {
-            return "redirect:/account";
-        }
-
-        Boolean  resultuser = userRepository.findById(1).isPresent();
-
-        user.setPassword(changepasword.getPassword());
-      
-        userRepository.save(user);
-        if (!resultuser) {
-            return "redirect:/account";
-        }
         return "redirect:/account/formchangepassword";
 
     }
