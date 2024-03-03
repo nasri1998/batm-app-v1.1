@@ -80,15 +80,17 @@ public class AccountController {
     }
     
     @PostMapping("check")
-    public String check(@RequestParam(name = "newpassword")String newpassword,ChangePassword changepasword) {
+    public String check(@RequestParam(name = "newpassword")String newpassword,ChangePassword changepasword ,Model model) {
 
         User user = userRepository.FindbyEmail(changepasword.getEmail());
 
         if (user == null) {
             return "account/index";
         }
-
-       
+        if (newpassword == changepasword.getPassword()) {
+            model.addAttribute("error", "password baru anda tidak boleh sama dengan password baru");
+            return "account/formchangepassword";
+        }
        changepasword.setPassword(newpassword);
 
        if(newpassword == "" || newpassword == null){
