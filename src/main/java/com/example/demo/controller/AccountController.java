@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.dto.Login;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -91,23 +92,29 @@ public class AccountController {
     }
 
     //Login
-        //http://localhost:8082/account/form
-        @GetMapping("login")
-        public String formLogin(Model model){
-            model.addAttribute("employee", new Employee());
-            model.addAttribute("user", new User());
-            return "account/login";
-        }
-    
-        @PostMapping("save")
-        public String save(User user, Employee employee){
-            user.setId(1); // set user id secara manual 
-            employee.setId(user.getId());
-    
+    //http://localhost:8082/account/form
+    @GetMapping("login")
+    public String formLogin(Model model){
+        model.addAttribute("login", new Login());
+        return "account/login";
+    }
+
+    @PostMapping("login/save")
+    public String save(Login login){
+        int empID = 1;
+        User user = new User();
+        Employee employee = new Employee();
+        user.setPassword(login.getPassword());
+
+        Boolean result = employeeRepository.findById(empID).isPresent();
+        if (result) {
+            user.setId(empID);
+            employee.setEmail(login.getEmail());
             employeeRepository.save(employee);
-    
             userRepository.save(user);
-    
-            return "redirect:/account";
+            return "redirect:/account/login/";
         }
+
+        return "redirect:/account/login";
+    }
 }
