@@ -24,37 +24,6 @@ public class AccountController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @GetMapping
-    public String index(Model model){
-        
-        return "account/index";
-    }
-
-    //localhost://account/register
-    @GetMapping("register")
-    public String form(Model model){
-        model.addAttribute("employee", new Employee());
-        model.addAttribute("user", new User());
-        return "account/register";
-    }
-
-    @PostMapping("save")
-    public String save(Employee employee, User user){
-        employeeRepository.save(employee);
-        Boolean result = employeeRepository.findById(employee.getId()).isPresent();
-        if (result) {
-            user.setId(employee.getId());
-            Role role = roleRepository.findById(5).orElse(null);
-            user.setRole(role);
-            userRepository.save(user);
-            return "redirect:/account";
-        }
-        return "redirect:/account";
-    }
-    
 
     //Method Forgot Password
     @GetMapping("forgot-password")
@@ -64,7 +33,7 @@ public class AccountController {
     }
 
     @PostMapping("forgot-password/check")
-    public String CheckEmail(ForgotPassword forgotPassword) {
+    public String checkEmail(ForgotPassword forgotPassword) {
         String emailExist = employeeRepository.findEmail(forgotPassword.getEmail());
         if (emailExist.equals(forgotPassword.getEmail())) {
             User user = userRepository.findUserByEmail(emailExist);
