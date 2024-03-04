@@ -8,6 +8,6 @@ import com.example.demo.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
-    @Query(value = "SELECT * FROM tb_m_user WHERE password = ?1", nativeQuery = true)
+    @Query(value = "SELECT password FROM tb_m_user WHERE password = ?1", nativeQuery = true)
     public String findPassword(String password);
 }
