@@ -105,9 +105,9 @@ public class AccountController {
         String password = userRepository.findPassword(login.getPassword());
 
         if (email.equals(login.getEmail()) && password.equals(login.getPassword())) {
-            return "redirect:/account/index/";
+            return "account/index";
         } else {
-            return "redirect:/account/login/";
+            return "account/login";
         }
 
     }
