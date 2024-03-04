@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.dto.Login;
+import com.example.demo.dto.ResponseLogin;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -99,16 +100,14 @@ public class AccountController {
         return "account/login";
     }
 
-    @PostMapping("login/login-check")
+    @PostMapping("authenticating")
     public String login(Login login){
-        String email = employeeRepository.findEmail(login.getEmail());
-        String password = userRepository.findPassword(login.getPassword());
+        ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
 
-        if (email.equals(login.getEmail()) && password.equals(login.getPassword())) {
-            return "account/index";
+        if (responseLogin.getEmail().equals(login.getEmail())) {
+            return "redirect:/account/index/";
         } else {
-            return "account/login";
+            return "redirect:/account/login/";
         }
-
     }
 }
