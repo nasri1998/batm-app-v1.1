@@ -59,39 +59,4 @@ public class AccountController {
         }
         return "redirect:/account/register";
     }
-
-
-    @GetMapping("formchangepassword")
-    public String formchange( Model model) {
-        
-    
-            model.addAttribute("employee", employeeRepository.findById(2).orElse(null));
-            model.addAttribute("user", userRepository.findById(2).orElse(null));
-        
-        return "account/formchangepassword";
-    }
-    
-    @PostMapping("check")
-    public String check(@RequestParam(name = "newpassword")String newpassword,Employee employee, User user) {
-
-    
-
-
-        Boolean resultemployee = employeeRepository.findById(2).isPresent();
-       
-        if (!resultemployee) {
-            return "redirect:/account";
-        }
-
-        Boolean  resultuser = userRepository.findById(2).isPresent();
-
-        user.setPassword(newpassword);
-        user.getPassword();
-        userRepository.save(user);
-        if (!resultuser) {
-            return "redirect:/account";
-        }
-        return "redirect:/account/formchangepassword";
-
-    }
 }
