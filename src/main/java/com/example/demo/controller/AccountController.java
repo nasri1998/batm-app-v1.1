@@ -37,7 +37,6 @@ public class AccountController {
         return "account/register";
     }
 
-
     @PostMapping("register/save")
     public String save(Register register){
         String emailExist = employeeRepository.findEmail(register.getEmail());
@@ -46,22 +45,30 @@ public class AccountController {
             employee.setName(register.getName());
             employee.setEmail(register.getEmail());
             employeeRepository.save(employee);
-
-
+            
+            Boolean result = employeeRepository.findById(employee.getId()).isPresent();
+            if (result) {
+                User user = new User();
+                user.setId(employee.getId());
+                user.setPassword(register.getPassword());
+                Role role = roleRepository.findById(5).orElse(null);
+                user.setRole(role);
+                userRepository.save(user);
+                return "redirect:/account/login";
+            }
+        }
+        return "redirect:/account/register";
+    }
 
     @GetMapping("form-change-password")
     public String formChange(Model model) {
         model.addAttribute("changePassword", new ChangePassword());
-
         return "account/form-change-password";
     }
 
     @PostMapping("check")
     public String check(ChangePassword changePassword, Model model) {
-       
         User user = userRepository.FindbyEmail(changePassword.getEmail());
-
-
         if (user == null) {
             return "account/index";
         } else if (changePassword.getNewPassword() == changePassword.getOldPassword()) {
@@ -76,7 +83,5 @@ public class AccountController {
             userRepository.save(user);
         }
         return "redirect:/account/form-change-password";
-
-    }
-    
+    }   
 }
