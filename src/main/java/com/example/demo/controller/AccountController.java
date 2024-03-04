@@ -56,73 +56,33 @@ public class AccountController {
         return "redirect:/account";
     }
 
-    @GetMapping("formchangepassword")
-    public String formchange(Model model) {
+    @GetMapping("form-change-password")
+    public String formChange(Model model) {
+        model.addAttribute("changePassword", new ChangePassword());
 
-        ChangePassword changePassword = new ChangePassword();
-        String email = employeeRepository.findByIdEmail(1);
-
-        String password = userRepository.findbyidPassword(1);
-        changePassword.setEmail(email);
-        changePassword.setPassword(password);
-
-        if (email == "" || password == "") {
-            return "redirect: account/register";
-        }
-        model.addAttribute("changePassword", changePassword);
-
-        return "account/formchangepassword";
+        return "account/form-change-password";
     }
 
     @PostMapping("check")
-    public String check(@RequestParam(name = "newpassword") String newpassword, ChangePassword changepasword,
-            Model model) {
-
-        User user = userRepository.FindbyEmail(changepasword.getEmail());
+    public String check(ChangePassword changePassword, Model model) {
+       
+        User user = userRepository.FindbyEmail(changePassword.getEmail());
 
         if (user == null) {
             return "account/index";
+        } else if (changePassword.getNewPassword() == changePassword.getOldPassword()) {
+            model.addAttribute("error", "Password Baru Anda tidak boleh sama");
+            return "account/form-change-password";
+        } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
+            return "redirect:/account/form-change-password";
+        } else if (changePassword.getOldPassword() != user.getPassword()) {
+            return "redirect:/account/form-change-password";
+        } else {
+            user.setPassword(changePassword.getNewPassword());
+            userRepository.save(user);
         }
-        if (newpassword == changepasword.getPassword()) {
-            model.addAttribute("error", "password baru anda tidak boleh sama dengan password lama anda");
-            return "account/formchangepassword";
-        }
-        changepasword.setPassword(newpassword);
-
-        if (newpassword == "" || newpassword == null) {
-
-            return "redirect:/account/formchangepassword";
-
-        }
-
-        user.setPassword(changepasword.getPassword());
-
-        userRepository.save(user);
-
-        return "redirect:/account/formchangepassword";
+        return "redirect:/account/form-change-password";
 
     }
 
 }
-
-//
-
-// return "account/formchangepassword";
-
-// String Cekemail =employeeRepository.findbyidemail(1);
-// if (Cekemail == "" || Cekemail == null) {
-// return "account/index";
-// }
-
-// String cekpassword = userRepository.findbyidPassword(1);
-
-// if (cekpassword == "" || cekpassword == null) {
-// return "account/index";
-// }
-
-// changepassword.setEmail(Cekemail);
-// changepassword.setPassword(cekpassword);
-
-// System.out.println(changepassword.getEmail());
-
-// return "account/formchangepassword";
