@@ -99,22 +99,16 @@ public class AccountController {
         return "account/login";
     }
 
-    @PostMapping("login/save")
-    public String save(Login login){
-        int empID = 1;
-        User user = new User();
-        Employee employee = new Employee();
-        user.setPassword(login.getPassword());
+    @PostMapping("login/login-check")
+    public String login(Login login){
+        String email = employeeRepository.findEmail(login.getEmail());
+        String password = userRepository.findPassword(login.getPassword());
 
-        Boolean result = employeeRepository.findById(empID).isPresent();
-        if (result) {
-            user.setId(empID);
-            employee.setEmail(login.getEmail());
-            employeeRepository.save(employee);
-            userRepository.save(user);
+        if (email.equals(login.getEmail()) && password.equals(login.getPassword())) {
+            return "redirect:/account/index/";
+        } else {
             return "redirect:/account/login/";
         }
 
-        return "redirect:/account/login";
     }
 }

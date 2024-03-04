@@ -6,7 +6,7 @@
     </head>
     <body>
         <div class="container">
-            <form method="post" th:action="@{/account/login/save}" th:object="${login}">
+            <form method="post" th:action="@{/account/login/login-check}" th:object="${login}">
                 <div class="form-group col-md-3">
                     <label>Email</label>
                     <input id= "email" class="form-control" th:field="*{email}">
