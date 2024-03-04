@@ -59,25 +59,4 @@ public class AccountController {
         }
         return "redirect:/account/register";
     }
-
-    //Login
-        //http://localhost:8082/account/form
-        @GetMapping("login")
-        public String formLogin(Model model){
-            model.addAttribute("employee", new Employee());
-            model.addAttribute("user", new User());
-            return "account/login";
-        }
-    
-        @PostMapping("save")
-        public String save(User user, Employee employee){
-            user.setId(1); // set user id secara manual 
-            employee.setId(user.getId());
-    
-            employeeRepository.save(employee);
-    
-            userRepository.save(user);
-    
-            return "redirect:/account";
-        }
 }
