@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.dto.Register;
+import com.example.demo.dto.ChangePassword;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -17,7 +18,6 @@ import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 
 @Controller
-//http://localhost:8080/account
 @RequestMapping("account")
 public class AccountController {
     @Autowired
@@ -29,6 +29,7 @@ public class AccountController {
     @Autowired
     private RoleRepository roleRepository;
 
+
     //http://localhost:8080/account/register
     @GetMapping("register")
     public String form(Model model){
@@ -36,7 +37,7 @@ public class AccountController {
         return "account/register";
     }
 
-    //http://localhost:8080/account/register/save
+
     @PostMapping("register/save")
     public String save(Register register){
         String emailExist = employeeRepository.findEmail(register.getEmail());
@@ -46,17 +47,36 @@ public class AccountController {
             employee.setEmail(register.getEmail());
             employeeRepository.save(employee);
 
-            Boolean result = employeeRepository.findById(employee.getId()).isPresent();
-            if (result) {
-                User user = new User();
-                user.setId(employee.getId());
-                user.setPassword(register.getPassword());
-                Role role = roleRepository.findById(5).orElse(null);
-                user.setRole(role);
-                userRepository.save(user);
-                return "redirect:/account/login";
-            }
-        }
-        return "redirect:/account/register";
+
+
+    @GetMapping("form-change-password")
+    public String formChange(Model model) {
+        model.addAttribute("changePassword", new ChangePassword());
+
+        return "account/form-change-password";
     }
+
+    @PostMapping("check")
+    public String check(ChangePassword changePassword, Model model) {
+       
+        User user = userRepository.FindbyEmail(changePassword.getEmail());
+
+
+        if (user == null) {
+            return "account/index";
+        } else if (changePassword.getNewPassword() == changePassword.getOldPassword()) {
+            model.addAttribute("error", "Password Baru Anda tidak boleh sama");
+            return "account/form-change-password";
+        } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
+            return "redirect:/account/form-change-password";
+        } else if (changePassword.getOldPassword() != user.getPassword()) {
+            return "redirect:/account/form-change-password";
+        } else {
+            user.setPassword(changePassword.getNewPassword());
+            userRepository.save(user);
+        }
+        return "redirect:/account/form-change-password";
+
+    }
+    
 }
