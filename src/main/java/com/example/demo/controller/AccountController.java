@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.demo.dto.Register;
 import com.example.demo.dto.ChangePassword;
 import com.example.demo.dto.ForgotPassword;
+import com.example.demo.dto.Login;
+import com.example.demo.dto.ResponseLogin;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -105,4 +107,22 @@ public class AccountController {
         return "account/forgot-password";
     }
 
+    //Login
+    //http://localhost:8082/account/form
+    @GetMapping("login")
+    public String formLogin(Model model){
+        model.addAttribute("login", new Login());
+        return "account/login";
+    }
+
+    @PostMapping("authenticating")
+    public String login(Login login){
+        ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
+
+        if (responseLogin.getEmail().equals(login.getEmail())) {
+            return "redirect:/account/index/";
+        } else {
+            return "redirect:/account/login/";
+        }
+    }
 }

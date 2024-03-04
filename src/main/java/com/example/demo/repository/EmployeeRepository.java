@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.example.demo.dto.ResponseLogin;
 import com.example.demo.model.Employee;
 
 
@@ -11,4 +12,10 @@ import com.example.demo.model.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Integer>{
     @Query(value = "SELECT email FROM tb_m_employee WHERE email = ?1", nativeQuery = true)
     public String findEmail(String email);
+    
+    @Query(
+        """
+        SELECT new com.example.demo.dto.ResponseLogin(e.name, e.email) FROM Employee e.email = ?1
+    """)
+    public ResponseLogin authenticate(String email);
 }
