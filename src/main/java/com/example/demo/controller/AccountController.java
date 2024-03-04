@@ -24,7 +24,6 @@ public class AccountController {
     @Autowired
     private UserRepository userRepository;
 
-
     //Method Forgot Password
     @GetMapping("forgot-password")
     public String forgot(Model model){
