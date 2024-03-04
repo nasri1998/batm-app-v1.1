@@ -42,7 +42,7 @@ public class AccountController {
     @PostMapping("register/save")
     public String save(Register register){
         String emailExist = employeeRepository.findEmail(register.getEmail());
-        if (!emailExist.equals(register.getEmail())) {
+        if (emailExist == null) {
             Employee employee = new Employee();
             employee.setName(register.getName());
             employee.setEmail(register.getEmail());
