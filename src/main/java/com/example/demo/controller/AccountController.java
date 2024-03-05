@@ -69,13 +69,13 @@ public class AccountController {
     public String check(ChangePassword changePassword, Model model) {
         User user = userRepository.FindbyEmail(changePassword.getEmail());
         if (user == null) {
-            return "account/index";
+            return "account/register";
         } else if (changePassword.getNewPassword() == changePassword.getOldPassword()) {
             model.addAttribute("error", "Password Baru Anda tidak boleh sama");
             return "account/form-change-password";
         } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
             return "redirect:/account/form-change-password";
-        } else if (changePassword.getOldPassword() != user.getPassword()) {
+        } else if (!changePassword.getOldPassword().equals(user.getPassword())) {
             return "redirect:/account/form-change-password";
         } else {
             user.setPassword(changePassword.getNewPassword());
