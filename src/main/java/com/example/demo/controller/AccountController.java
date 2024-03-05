@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.example.demo.dto.Register;
 import com.example.demo.dto.ChangePassword;
 import com.example.demo.dto.ForgotPassword;
@@ -55,7 +56,7 @@ public class AccountController {
                 User user = new User();
                 user.setId(employee.getId());
                 user.setPassword(register.getPassword());
-                Role role = roleRepository.findById(5).orElse(null);
+                Role role = roleRepository.findById(4).orElse(null);
                 user.setRole(role);
                 userRepository.save(user);
                 return "redirect:/account/login";
@@ -70,9 +71,10 @@ public class AccountController {
         return "account/form-change-password";
     }
 
+    
     @PostMapping("check")
     public String check(ChangePassword changePassword, Model model) {
-        User user = userRepository.FindbyEmail(changePassword.getEmail());
+        User user = userRepository.FindByEmail(changePassword.getEmail());
         if (user == null) {
             return "account/register";
         } else if (changePassword.getNewPassword() == changePassword.getOldPassword()) {

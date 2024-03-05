@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -8,7 +9,10 @@ import javax.persistence.Table;
 @Table(name = "tb_m_parameter")
 public class Parameter {
     @Id
+    @Column(name = "id")
     private String id;
+
+    @Column(name = "value")
     private String value;
 
     public String getId() {
@@ -22,5 +26,6 @@ public class Parameter {
     }
     public void setValue(String value) {
         this.value = value;
-    }    
+    }
+
 }
