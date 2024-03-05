@@ -13,7 +13,7 @@ import com.example.demo.repository.UserRepository;
 
 @RestController
 @RequestMapping("api")
-public class AccountResController {
+public class AccountRestController {
     @Autowired
     private UserRepository userRepository;
 
