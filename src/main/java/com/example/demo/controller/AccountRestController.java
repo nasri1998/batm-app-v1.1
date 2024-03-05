@@ -6,16 +6,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.ChangePassword;
+import com.example.demo.dto.ForgotPassword;
+import com.example.demo.dto.Login;
 import com.example.demo.model.User;
 import com.example.demo.repository.EmployeeRepository;
 
 import com.example.demo.dto.Register;
+import com.example.demo.dto.ResponseLogin;
 import com.example.demo.model.Employee;
 import com.example.demo.model.User;
 import com.example.demo.model.Role;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
+
 
 @RestController
 @RequestMapping("api")
@@ -26,6 +30,9 @@ public class AccountRestController {
     private RoleRepository roleRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private ParameterRepository parameterRepository;
 
     @PostMapping("account/form-change-password")
     public String CheckPasswordUser(@RequestBody ChangePassword changePassword) {
@@ -71,4 +78,29 @@ public class AccountRestController {
         return "Register Error";
     }
 
+   
+
+    @PostMapping("account/authenticating")
+    public boolean login(@RequestBody Login login){
+        ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
+        return employeeRepository.findEmail(responseLogin.getEmail()).equals(login.getEmail());
+    }
+
+   
+
+    //Method forgot password
+    @PostMapping("account/forgot-password")
+    public String checkEmail(@RequestBody ForgotPassword forgotPassword, @RequestHeader(name="fp-nsr") String token) {
+        if (token.equals(parameterRepository.findById("fp-nsr").get().getValue())) {
+            String emailExist = employeeRepository.findEmail(forgotPassword.getEmail());
+            if (emailExist.equals(forgotPassword.getEmail())) {
+                User user = userRepository.findUserByEmail(emailExist);
+                user.setPassword(forgotPassword.getPassword());
+    
+                userRepository.save(user);
+                return "Password telah diupdate";
+            }
+        }
+        return "Error";
+    }
 }
