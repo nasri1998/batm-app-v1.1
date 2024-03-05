@@ -30,6 +30,11 @@ public class AccountController {
     @Autowired
     private RoleRepository roleRepository;
 
+    @GetMapping
+    public String index(){
+        return "account/index";
+    }
+
     @GetMapping("register")
     public String form(Model model) {
         model.addAttribute("register", new Register());
@@ -99,7 +104,7 @@ public class AccountController {
             user.setPassword(forgotPassword.getPassword());
 
             userRepository.save(user);
-            return "account/forgot-password";
+            return "account/login";
         }
         return "account/forgot-password";
     }
@@ -115,7 +120,7 @@ public class AccountController {
         ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
 
         if (responseLogin.getEmail().equals(login.getEmail())) {
-            return "redirect:/account/index/";
+            return "redirect:/account";
         } else {
             return "redirect:/account/login/";
         }
