@@ -37,7 +37,6 @@ public class AccountRestController {
         } else {
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
-
             return "password baru sudah di simpan";
         }
 
