@@ -43,7 +43,7 @@ public class AccountController {
     @PostMapping("register/save")
     public String save(Register register){
         String emailExist = employeeRepository.findEmail(register.getEmail());
-        if (!emailExist.equals(register.getEmail())) {
+        if (emailExist == null) {
             Employee employee = new Employee();
             employee.setName(register.getName());
             employee.setEmail(register.getEmail());
@@ -54,7 +54,7 @@ public class AccountController {
                 User user = new User();
                 user.setId(employee.getId());
                 user.setPassword(register.getPassword());
-                Role role = roleRepository.findById(5).orElse(null);
+                Role role = roleRepository.findById(4).orElse(null);
                 user.setRole(role);
                 userRepository.save(user);
                 return "redirect:/account/login";
@@ -117,10 +117,18 @@ public class AccountController {
 
     @PostMapping("authenticating")
     public String login(Login login){
-        ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
+        // ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
 
-        if (responseLogin.getEmail().equals(login.getEmail())) {
-            return "redirect:/account/index/";
+        // if (responseLogin.getEmail().equals(login.getEmail())) {
+        //     return "redirect:/account/register/";
+        // } else {
+        //     return "redirect:/account/login/";
+        // }
+
+        //baru
+        ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
+        if (responseLogin != null && responseLogin.getEmail() != null && responseLogin.getEmail().equals(login.getEmail())) {
+            return "redirect:/account/register/";
         } else {
             return "redirect:/account/login/";
         }
