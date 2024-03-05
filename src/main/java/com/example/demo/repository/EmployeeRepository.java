@@ -18,4 +18,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>{
         SELECT new com.example.demo.dto.ResponseLogin(e.name, e.email) FROM Employee e WHERE e.email = ?1
     """)
     public ResponseLogin authenticate(String email);
-}
+} 

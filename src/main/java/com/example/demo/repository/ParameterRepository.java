@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.model.Parameter;
 
 @Repository
-public interface ParameterRepository extends JpaRepository <Parameter, String>{
+public interface ParameterRepository extends JpaRepository<Parameter, String>{
     
 }

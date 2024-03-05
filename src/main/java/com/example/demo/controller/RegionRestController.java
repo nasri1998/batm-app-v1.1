@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,13 +32,25 @@ public class RegionRestController {
         return regionRepository.findAll();
     }
 
+    @PostMapping("region")
+    public boolean newRegion(@RequestBody Region newRegion,@RequestHeader(name = "x-token") String token){
+        if (token.equals(parameterRepository.findById("x-token").get().getValue())) {
+            return true;
+        }
+        return false;
+        
+    }
     @GetMapping("region/{id}")
-    public Region get(@PathVariable(required = true) Integer id){
+    public Region getId(@PathVariable(required = true)Integer id ){        
         return regionRepository.findById(id).orElse(null);
     }
-
-    @PostMapping("region")
-    public boolean save(@RequestBody Region region, @RequestHeader(name="x-token") String token){
+    @DeleteMapping("region/{id}")
+    public boolean delete(@PathVariable(required = true, name = "id")Integer id){
+        regionRepository.deleteById(id);
+        return !regionRepository.findById(id).isPresent();
+    }
+    
+    public Boolean save(@RequestBody Region region, @RequestHeader(name = "x-token") String token){
         if (token.equals(parameterRepository.findById("x-token").get().getValue())) {
             Region result = regionRepository.save(region);
             return regionRepository.findById(result.getId()).isPresent();
@@ -44,9 +58,11 @@ public class RegionRestController {
         return false;
     }
 
-    @DeleteMapping("region/{id}")
-    public boolean delete(@PathVariable(required = true, name = "id") Integer id){
-        regionRepository.deleteById(id);
-        return !regionRepository.findById(id).isPresent();
+    @PostMapping("region/{id}")
+    public Region get(@PathVariable(required = true) Integer id){
+        return regionRepository.findById(id).orElse(null);
     }
+
+    
+
 }
