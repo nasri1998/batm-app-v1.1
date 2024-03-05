@@ -113,15 +113,6 @@ public class AccountController {
     @PostMapping("authenticating")
     public String login(Login login) {
         ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
-
-        // if (responseLogin.getEmail().equals(login.getEmail())) {
-        //     return "redirect:/account/register/";
-        // } else {
-        //     return "redirect:/account/login/";
-        // }
-
-        //baru
-        ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
         if (responseLogin != null && responseLogin.getEmail() != null && responseLogin.getEmail().equals(login.getEmail())) {
             return "redirect:/account/register/";
         } else {
