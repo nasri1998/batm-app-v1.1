@@ -33,10 +33,10 @@ public class AccountRestController {
     private ParameterRepository parameterRepository;
 
     @PostMapping("account/form-change-password")
-    public String CheckPasswordUser(@RequestBody ChangePassword changePassword) {
+    public String checkPassword(@RequestBody ChangePassword changePassword) {
         String email = employeeRepository.findEmail(changePassword.getEmail());
-        String password = userRepository.FindPassword(changePassword.getOldPassword());
-        User user = userRepository.FindByEmail(changePassword.getEmail());
+        String password = userRepository.findPassword(changePassword.getOldPassword());
+        User user = userRepository.findByEmail(changePassword.getEmail());
 
         if (email.equals(null) && password.equals(null)) {
             return "password atau email tidak ada";
