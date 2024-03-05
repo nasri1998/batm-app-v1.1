@@ -35,7 +35,7 @@ public class AccountRestController {
                 user.setPassword(forgotPassword.getPassword());
     
                 userRepository.save(user);
-                return "Data telah ditambahkan";
+                return "Password telah diupdate";
             }
         }
         return "Error";
