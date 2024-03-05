@@ -6,8 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.example.demo.dto.Register;
 import com.example.demo.dto.ChangePassword;
 import com.example.demo.dto.ForgotPassword;
@@ -32,16 +30,14 @@ public class AccountController {
     @Autowired
     private RoleRepository roleRepository;
 
-
-    //http://localhost:8080/account/register
     @GetMapping("register")
-    public String form(Model model){
+    public String form(Model model) {
         model.addAttribute("register", new Register());
         return "account/register";
     }
 
     @PostMapping("register/save")
-    public String save(Register register){
+    public String save(Register register) {
         String emailExist = employeeRepository.findEmail(register.getEmail());
         if (emailExist == null) {
             Employee employee = new Employee();
@@ -73,23 +69,24 @@ public class AccountController {
     public String check(ChangePassword changePassword, Model model) {
         User user = userRepository.FindbyEmail(changePassword.getEmail());
         if (user == null) {
-            return "account/index";
+            return "account/register";
         } else if (changePassword.getNewPassword() == changePassword.getOldPassword()) {
             model.addAttribute("error", "Password Baru Anda tidak boleh sama");
             return "account/form-change-password";
         } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
             return "redirect:/account/form-change-password";
-        } else if (changePassword.getOldPassword() != user.getPassword()) {
+        } else if (!changePassword.getOldPassword().equals(user.getPassword())) {
             return "redirect:/account/form-change-password";
         } else {
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
         }
         return "redirect:/account/form-change-password";
-    }   
-    //Method Forgot Password
+    }
+
+    // Method Forgot Password
     @GetMapping("forgot-password")
-    public String forgot(Model model){
+    public String forgot(Model model) {
         model.addAttribute("forgotPassword", new ForgotPassword());
         return "account/forgot-password";
     }
@@ -107,16 +104,14 @@ public class AccountController {
         return "account/forgot-password";
     }
 
-    //Login
-    //http://localhost:8082/account/form
     @GetMapping("login")
-    public String formLogin(Model model){
+    public String formLogin(Model model) {
         model.addAttribute("login", new Login());
         return "account/login";
     }
 
     @PostMapping("authenticating")
-    public String login(Login login){
+    public String login(Login login) {
         ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
 
         if (responseLogin.getEmail().equals(login.getEmail())) {
