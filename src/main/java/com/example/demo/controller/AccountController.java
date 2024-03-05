@@ -67,7 +67,7 @@ public class AccountController {
 
     @PostMapping("check")
     public String check(ChangePassword changePassword, Model model) {
-        User user = userRepository.FindbyEmail(changePassword.getEmail());
+        User user = userRepository.FindByEmail(changePassword.getEmail());
         if (user == null) {
             return "account/register";
         } else if (changePassword.getNewPassword() == changePassword.getOldPassword()) {
