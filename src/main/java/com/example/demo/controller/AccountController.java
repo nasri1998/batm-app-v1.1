@@ -65,6 +65,7 @@ public class AccountController {
         return "account/form-change-password";
     }
 
+    
     @PostMapping("check")
     public String check(ChangePassword changePassword, Model model) {
         User user = userRepository.FindByEmail(changePassword.getEmail());
