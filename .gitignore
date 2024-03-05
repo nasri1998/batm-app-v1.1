@@ -31,4 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-/main/java/com/example/demo/resources/application.properties
+**/src/main/**/resources.application.properties
