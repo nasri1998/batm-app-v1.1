@@ -74,7 +74,7 @@ public class AccountController {
     
     @PostMapping("check")
     public String check(ChangePassword changePassword, Model model) {
-        User user = userRepository.FindByEmail(changePassword.getEmail());
+        User user = userRepository.findByEmail(changePassword.getEmail());
         if (user == null) {
             return "account/register";
         } else if (changePassword.getNewPassword() == changePassword.getOldPassword()) {
@@ -91,7 +91,7 @@ public class AccountController {
         return "redirect:/account/form-change-password";
     }
 
-    // Method Forgot Password
+
     @GetMapping("forgot-password")
     public String forgot(Model model) {
         model.addAttribute("forgotPassword", new ForgotPassword());
