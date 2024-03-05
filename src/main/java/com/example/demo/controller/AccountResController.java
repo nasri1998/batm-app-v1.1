@@ -21,25 +21,25 @@ public class AccountResController {
     private EmployeeRepository employeeRepository;
 
     @PostMapping("account/form-change-password")
-    public String CheckPasswordUser(@RequestBody ChangePassword changePassword){
+    public String CheckPasswordUser(@RequestBody ChangePassword changePassword) {
         String email = employeeRepository.findEmail(changePassword.getEmail());
         String password = userRepository.FindPassword(changePassword.getOldPassword());
         User user = userRepository.FindByEmail(changePassword.getEmail());
 
         if (email.equals(null) && password.equals(null)) {
             return "password atau email tidak ada";
-        }else if (changePassword.getNewPassword() == password) {
+        } else if (changePassword.getNewPassword() == password) {
             return "password baru anda tidak boleh sama";
-        }else if (!changePassword.getOldPassword().equals(password)) {
+        } else if (!changePassword.getOldPassword().equals(password)) {
             return "password lama anda tidak sesuai";
-        }else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
+        } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
             return "tidak boleh kosong";
-        }else{
+        } else {
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
 
             return "password baru sudah di simpan";
         }
-        
+
     }
 }
