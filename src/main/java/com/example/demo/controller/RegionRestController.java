@@ -50,4 +50,19 @@ public class RegionRestController {
         return !regionRepository.findById(id).isPresent();
     }
     
+    public Boolean save(@RequestBody Region region, @RequestHeader(name = "x-token") String token){
+        if (token.equals(parameterRepository.findById("x-token").get().getValue())) {
+            Region result = regionRepository.save(region);
+            return regionRepository.findById(result.getId()).isPresent();
+        }
+        return false;
+    }
+
+    @PostMapping("region/{id}")
+    public Region get(@PathVariable(required = true) Integer id){
+        return regionRepository.findById(id).orElse(null);
+    }
+
+    
+
 }

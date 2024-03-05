@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.example.demo.dto.Register;
 import com.example.demo.dto.ChangePassword;
 import com.example.demo.dto.ForgotPassword;
@@ -39,7 +40,7 @@ public class AccountController {
     @PostMapping("register/save")
     public String save(Register register) {
         String emailExist = employeeRepository.findEmail(register.getEmail());
-        if (!emailExist.equals(register.getEmail())) {
+        if (emailExist == null) {
             Employee employee = new Employee();
             employee.setName(register.getName());
             employee.setEmail(register.getEmail());
