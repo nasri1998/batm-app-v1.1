@@ -40,20 +40,20 @@ public class AccountRestController {
         ResponseChangePassword responChangePassword = userRepository.findUser(changePassword.getEmail());
         // harus menggunakan 1x request saja untuk mendapatkan email dan password
         if (responChangePassword.getEmail().equals(null) && responChangePassword.getPassword().equals(null)) {
-            return CustomResponse.generateResponse(HttpStatus.OK, "user not found", null);
+            return CustomResponse.generate(HttpStatus.OK, "user not found", null);
         } else if (changePassword.getNewPassword().equals(responChangePassword.getPassword())) {
-            return CustomResponse.generateResponse(HttpStatus.BAD_REQUEST,
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST,
                     "The new password cannot be the same as the old password", null);
         } else if (!changePassword.getOldPassword().equals(responChangePassword.getPassword())) {
-            return CustomResponse.generateResponse(HttpStatus.BAD_REQUEST, "password does not match", null);
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST, "password does not match", null);
         } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
-            return CustomResponse.generateResponse(HttpStatus.BAD_REQUEST,
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST,
                     "the field cannot be empty, check your input", null);
         } else {
             User user = userRepository.findByEmail(changePassword.getEmail());
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
-            return CustomResponse.generateResponse(HttpStatus.OK, "successfully changed your password", changePassword);
+            return CustomResponse.generate(HttpStatus.OK, "successfully changed your password", changePassword);
         }
     }
 

@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class CustomResponse {
-    public static ResponseEntity<Object> generateResponse(HttpStatus status, String message, Object dataObject) {
+    public static ResponseEntity<Object> generate(HttpStatus status, String message, Object dataObject) {
         Map<String, Object> response = new HashMap<>();
 
         response.put("status", status);
@@ -17,7 +17,7 @@ public class CustomResponse {
         return new ResponseEntity<Object>(response, status);
     }
 
-    public static ResponseEntity<Object> generateResponse(HttpStatus status, String message) {
+    public static ResponseEntity<Object> generate(HttpStatus status, String message) {
         Map<String, Object> response = new HashMap<>();
 
         response.put("status", status);
