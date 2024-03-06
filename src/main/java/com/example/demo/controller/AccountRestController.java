@@ -85,7 +85,7 @@ public class AccountRestController {
         if (responseLogin.getEmail().equals(login.getEmail())) {
             return "Login Successfully";
         } else {
-            return "Login Error";
+            return "Login Failed";
         }
     }
 
