@@ -93,14 +93,12 @@ public class AccountRestController {
     @PostMapping("account/forgot-password")
     public String checkEmail(@RequestBody ForgotPassword forgotPassword, @RequestHeader(name = "fp-nsr") String token) {
         if (token.equals(parameterRepository.findById("fp-nsr").get().getValue())) {
-            String emailExist = employeeRepository.findEmail(forgotPassword.getEmail());
-            if (emailExist.equals(forgotPassword.getEmail())) {
-                // menggunakan line dibawah ini untuk get data sekaligus dengan cek email
-                User user = userRepository.findUserByEmail(emailExist);
+            // menggunakan line dibawah ini untuk get data sekaligus dengan cek email
+            User user = userRepository.findUserByEmail(forgotPassword.getEmail());
+            if (user.getEmployee().getEmail().equals(forgotPassword.getEmail())) {
                 user.setPassword(forgotPassword.getPassword());
-
                 userRepository.save(user);
-                return "Password telah diupdate";
+                return "Password succesfully update";
             }
         }
         return "Error";
