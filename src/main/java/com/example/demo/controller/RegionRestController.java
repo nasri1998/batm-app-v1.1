@@ -32,8 +32,8 @@ public class RegionRestController {
     }
 
     @GetMapping("region/{id}")
-    public Region get(@PathVariable(required = true) Integer id) {
-        return regionRepository.findById(id).orElse(null);
+    public ResponseEntity<Object> get(@PathVariable(required = true) Integer id) {
+        return CustomResponse.generate(HttpStatus.OK, "id berhasil ditemukan", regionRepository.findById(id).orElse(null));
     }
 
     @PostMapping("region")
@@ -44,12 +44,12 @@ public class RegionRestController {
                 return CustomResponse.generate(HttpStatus.OK, "Data Successfully Added");
             }
         }
-        return CustomResponse.generate(HttpStatus.OK, "Error Adding Data");
+        return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Error Adding Data");
     }
 
     @DeleteMapping("region/{id}")
-    public boolean delete(@PathVariable(required = true, name = "id") Integer id) {
+    public ResponseEntity<Object> delete(@PathVariable(required = true, name = "id") Integer id) {
         regionRepository.deleteById(id);
-        return !regionRepository.findById(id).isPresent();
+        return CustomResponse.generate(HttpStatus.OK, "id berhasil dihapus", !regionRepository.findById(id).isPresent());
     }
 }

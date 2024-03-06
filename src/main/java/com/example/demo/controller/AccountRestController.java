@@ -80,13 +80,13 @@ public class AccountRestController {
     }
 
     @PostMapping("account/authenticating")
-    public String login(@RequestBody Login login) {
+    public ResponseEntity<Object> login(@RequestBody Login login) {
         ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
 
-        if (responseLogin.getEmail().equals(login.getEmail())) {
-            return "Login Successfully";
+        if (responseLogin.getEmail().equals(login.getEmail()))  {
+            return CustomResponse.generate(HttpStatus.OK, "Login Successfully");
         } else {
-            return "Login Failed";
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Login Failed");
         }
     }
 
