@@ -58,7 +58,7 @@ public class AccountRestController {
     }
 
     @PostMapping("account/register")
-    public String save(@RequestBody Register register) {
+    public ResponseEntity<Object> save(@RequestBody Register register) {
         String emailExist = employeeRepository.findEmail(register.getEmail());
         if (emailExist == null) {
             Employee employee = new Employee();
@@ -73,10 +73,10 @@ public class AccountRestController {
                 Role role = roleRepository.findById(5).orElse(null);
                 user.setRole(role);
                 userRepository.save(user);
-                return "Register Successfully";
+                return CustomResponse.generate(HttpStatus.OK, "Register Successfully");
             }
         }
-        return "Register Error";
+        return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Register Failed");
     }
 
     @PostMapping("account/authenticating")
