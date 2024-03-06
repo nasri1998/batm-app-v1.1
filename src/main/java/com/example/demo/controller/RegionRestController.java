@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
-
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,41 +26,27 @@ public class RegionRestController {
     private ParameterRepository parameterRepository;
 
     @GetMapping("regions")
-    public List<Region> get(){
+    public List<Region> get() {
         return regionRepository.findAll();
     }
 
-    @PostMapping("region")
-    public boolean newRegion(@RequestBody Region newRegion,@RequestHeader(name = "x-token") String token){
-        if (token.equals(parameterRepository.findById("x-token").get().getValue())) {
-            return true;
-        }
-        return false;
-        
-    }
     @GetMapping("region/{id}")
-    public Region getId(@PathVariable(required = true)Integer id ){        
+    public Region get(@PathVariable(required = true) Integer id) {
         return regionRepository.findById(id).orElse(null);
     }
-    @DeleteMapping("region/{id}")
-    public boolean delete(@PathVariable(required = true, name = "id")Integer id){
-        regionRepository.deleteById(id);
-        return !regionRepository.findById(id).isPresent();
-    }
-    
-    public Boolean save(@RequestBody Region region, @RequestHeader(name = "x-token") String token){
-        if (token.equals(parameterRepository.findById("x-token").get().getValue())) {
+
+    @PostMapping("region")
+    public boolean save(@RequestBody Region region, @RequestHeader(name = "x-token") String token) {
+        if(token.equals(parameterRepository.findById("x-token").get().getValue())) {
             Region result = regionRepository.save(region);
             return regionRepository.findById(result.getId()).isPresent();
         }
         return false;
     }
 
-    @PostMapping("region/{id}")
-    public Region get(@PathVariable(required = true) Integer id){
-        return regionRepository.findById(id).orElse(null);
+    @DeleteMapping("region/{id}")
+    public boolean delete(@PathVariable(required = true, name = "id") Integer id) {
+        regionRepository.deleteById(id);
+        return !regionRepository.findById(id).isPresent();
     }
-
-    
-
 }
