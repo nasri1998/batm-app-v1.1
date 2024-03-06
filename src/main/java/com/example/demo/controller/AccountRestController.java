@@ -33,10 +33,12 @@ public class AccountRestController {
     private ParameterRepository parameterRepository;
 
     @PostMapping("account/form-change-password")
-    public String CheckPasswordUser(@RequestBody ChangePassword changePassword) {
+    public String checkPassword(@RequestBody ChangePassword changePassword) {
         String email = employeeRepository.findEmail(changePassword.getEmail());
-        String password = userRepository.FindPassword(changePassword.getOldPassword());
-        User user = userRepository.FindByEmail(changePassword.getEmail());
+        String password = userRepository.findPassword(changePassword.getOldPassword());
+        User user = userRepository.findByEmail(changePassword.getEmail());
+
+        // harus menggunakan 1x request saja untuk mendapatkan email dan password
 
         if (email.equals(null) && password.equals(null)) {
             return "password atau email tidak ada";
@@ -93,6 +95,7 @@ public class AccountRestController {
         if (token.equals(parameterRepository.findById("fp-nsr").get().getValue())) {
             String emailExist = employeeRepository.findEmail(forgotPassword.getEmail());
             if (emailExist.equals(forgotPassword.getEmail())) {
+                // menggunakan line dibawah ini untuk get data sekaligus dengan cek email
                 User user = userRepository.findUserByEmail(emailExist);
                 user.setPassword(forgotPassword.getPassword());
 
