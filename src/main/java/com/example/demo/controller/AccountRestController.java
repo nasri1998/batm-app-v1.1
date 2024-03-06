@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -15,6 +17,7 @@ import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.dto.Register;
 import com.example.demo.dto.ResponseChangePassword;
 import com.example.demo.dto.ResponseLogin;
+import com.example.demo.handler.CustomResponse;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.repository.RoleRepository;
@@ -54,9 +57,8 @@ public class AccountRestController {
         return "nice";
     }
 
-
     @PostMapping("account/register")
-    public String save(@RequestBody Register register) {
+    public ResponseEntity<Object> save(@RequestBody Register register) {
         String emailExist = employeeRepository.findEmail(register.getEmail());
         if (emailExist == null) {
             Employee employee = new Employee();
@@ -71,10 +73,10 @@ public class AccountRestController {
                 Role role = roleRepository.findById(5).orElse(null);
                 user.setRole(role);
                 userRepository.save(user);
-                return "Register Successfully";
+                return CustomResponse.generate(HttpStatus.OK, "Register Successfully");
             }
         }
-        return "Register Error";
+        return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Register Failed");
     }
 
     @PostMapping("account/authenticating")
@@ -87,7 +89,6 @@ public class AccountRestController {
             return "Login Failed";
         }
     }
-
 
     @PostMapping("account/forgot-password")
     public String checkEmail(@RequestBody ForgotPassword forgotPassword, @RequestHeader(name = "fp-nsr") String token) {
