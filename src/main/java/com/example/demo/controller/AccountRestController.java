@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -15,6 +17,7 @@ import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.dto.Register;
 import com.example.demo.dto.ResponseChangePassword;
 import com.example.demo.dto.ResponseLogin;
+import com.example.demo.handler.CustomResponse;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.repository.RoleRepository;
@@ -54,7 +57,6 @@ public class AccountRestController {
         return "nice";
     }
 
-
     @PostMapping("account/register")
     public String save(@RequestBody Register register) {
         String emailExist = employeeRepository.findEmail(register.getEmail());
@@ -88,18 +90,18 @@ public class AccountRestController {
         }
     }
 
-
     @PostMapping("account/forgot-password")
-    public String checkEmail(@RequestBody ForgotPassword forgotPassword, @RequestHeader(name = "fp-nsr") String token) {
+    public ResponseEntity<Object> checkEmail(@RequestBody ForgotPassword forgotPassword, @RequestHeader(name = "fp-nsr") String token) {
         if (token.equals(parameterRepository.findById("fp-nsr").get().getValue())) {
             // menggunakan line dibawah ini untuk get data sekaligus dengan cek email
             User user = userRepository.findUserByEmail(forgotPassword.getEmail());
             if (user.getEmployee().getEmail().equals(forgotPassword.getEmail())) {
                 user.setPassword(forgotPassword.getPassword());
                 userRepository.save(user);
-                return "Password succesfully update";
+                // Method dalam Class CustomResponse dibuat static sehingga hanya perlu memanggil classnya saja
+                return CustomResponse.responseEntity(HttpStatus.OK, "Your Password has been Reset");
             }
         }
-        return "Error";
+        return CustomResponse.responseEntity(HttpStatus.BAD_REQUEST, "Wrong Token");
     }
 }
