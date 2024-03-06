@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -15,6 +17,7 @@ import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.dto.Register;
 import com.example.demo.dto.ResponseChangePassword;
 import com.example.demo.dto.ResponseLogin;
+import com.example.demo.handler.CustomResponse;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.repository.RoleRepository;
@@ -78,13 +81,13 @@ public class AccountRestController {
     }
 
     @PostMapping("account/authenticating")
-    public String login(@RequestBody Login login) {
+    public ResponseEntity<Object> login(@RequestBody Login login) {
         ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
 
-        if (responseLogin.getEmail().equals(login.getEmail())) {
-            return "Login Successfully";
+        if (responseLogin.getEmail().equals(login.getEmail()))  {
+            return CustomResponse.generate(HttpStatus.OK, "Login Successfully");
         } else {
-            return "Login Failed";
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Login Failed");
         }
     }
 
