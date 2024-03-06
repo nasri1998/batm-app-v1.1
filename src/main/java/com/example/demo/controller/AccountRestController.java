@@ -41,7 +41,7 @@ public class AccountRestController {
         // harus menggunakan 1x request saja untuk mendapatkan email dan password
         if (responChangePassword.getEmail().equals(null) && responChangePassword.getPassword().equals(null)) {
             return CustomResponse.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, "user not found", null);
-        } else if (changePassword.getNewPassword() == responChangePassword.getPassword()) {
+        } else if (changePassword.getNewPassword().equals(responChangePassword.getPassword())) {
             return CustomResponse.generateResponse(HttpStatus.BAD_REQUEST,
                     "The new password cannot be the same as the old password", null);
         } else if (!changePassword.getOldPassword().equals(responChangePassword.getPassword())) {
