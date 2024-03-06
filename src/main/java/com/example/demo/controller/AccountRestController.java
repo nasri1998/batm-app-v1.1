@@ -36,25 +36,25 @@ public class AccountRestController {
     private ParameterRepository parameterRepository;
 
     @PostMapping("account/form-change-password")
-    public String checkPassword(@RequestBody ChangePassword changePassword) {
+    public ResponseEntity<Object> checkPassword(@RequestBody ChangePassword changePassword) {
         ResponseChangePassword responChangePassword = userRepository.findUser(changePassword.getEmail());
         // harus menggunakan 1x request saja untuk mendapatkan email dan password
-
-        if (responChangePassword.getEmail().equals(null )&& responChangePassword.getPassword().equals(null)) {
-            return "password atau email tidak ada";
-        }else if (changePassword.getNewPassword()== responChangePassword.getPassword()) {
-            return "password baru anda tidak boleh sama dengan password lama anda";
-        }else if (!changePassword.getOldPassword().equals(responChangePassword.getPassword())) {
-            return "password lama anda tidak sesuai";
-        }else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
-            
-        }else{
+        if (responChangePassword.getEmail().equals(null) && responChangePassword.getPassword().equals(null)) {
+            return CustomResponse.generate(HttpStatus.OK, "user not found", null);
+        } else if (changePassword.getNewPassword().equals(responChangePassword.getPassword())) {
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST,
+                    "The new password cannot be the same as the old password", null);
+        } else if (!changePassword.getOldPassword().equals(responChangePassword.getPassword())) {
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST, "password does not match", null);
+        } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST,
+                    "the field cannot be empty, check your input", null);
+        } else {
             User user = userRepository.findByEmail(changePassword.getEmail());
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
-            return "berhasil menyimpan password baru";
+            return CustomResponse.generate(HttpStatus.OK, "successfully changed your password", changePassword);
         }
-        return "nice";
     }
 
     @PostMapping("account/register")
