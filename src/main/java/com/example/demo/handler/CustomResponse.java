@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 public class CustomResponse {
     //fungsi static adalah dapat menggunakan classnya langsung tanpa perlu di instansiasi objeknya
-    public static ResponseEntity<Object> responseEntity(HttpStatus httpStatus, String message, Object data){
+    public static ResponseEntity<Object> generate(HttpStatus httpStatus, String message, Object data){
         Map<String, Object> response = new HashMap<>();
         response.put("status", httpStatus);
         response.put("message", message);
@@ -16,7 +16,7 @@ public class CustomResponse {
         return new ResponseEntity<Object>(response, httpStatus);
     }
 
-    public static ResponseEntity<Object> responseEntity(HttpStatus httpStatus, String message){
+    public static ResponseEntity<Object> generate(HttpStatus httpStatus, String message){
         Map<String, Object> response = new HashMap<>();
         response.put("status", httpStatus);
         response.put("message", message);

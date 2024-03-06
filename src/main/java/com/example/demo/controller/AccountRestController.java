@@ -99,9 +99,9 @@ public class AccountRestController {
                 user.setPassword(forgotPassword.getPassword());
                 userRepository.save(user);
                 // Method dalam Class CustomResponse dibuat static sehingga hanya perlu memanggil classnya saja
-                return CustomResponse.responseEntity(HttpStatus.OK, "Your Password has been Reset");
+                return CustomResponse.generate(HttpStatus.OK, "Your Password has been Reset");
             }
         }
-        return CustomResponse.responseEntity(HttpStatus.BAD_REQUEST, "Wrong Token");
+        return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Wrong Token");
     }
 }
