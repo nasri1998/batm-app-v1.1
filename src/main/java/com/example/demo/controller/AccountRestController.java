@@ -53,7 +53,7 @@ public class AccountRestController {
             User user = userRepository.findByEmail(changePassword.getEmail());
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
-            return CustomResponse.generate(HttpStatus.OK, "successfully changed your password");
+            return CustomResponse.generate(HttpStatus.CREATED, "successfully changed your password");
         }
     }
 
