@@ -10,6 +10,7 @@ import com.example.demo.dto.ChangePassword;
 import com.example.demo.dto.ForgotPassword;
 import com.example.demo.dto.Login;
 import com.example.demo.model.User;
+import com.example.demo.repository.ParameterRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.dto.Register;
 import com.example.demo.dto.ResponseChangePassword;
@@ -18,7 +19,6 @@ import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.repository.ParameterRepository;
 
 @RestController
 @RequestMapping("api")
@@ -78,24 +78,26 @@ public class AccountRestController {
     }
 
     @PostMapping("account/authenticating")
-    public boolean login(@RequestBody Login login) {
+    public String login(@RequestBody Login login) {
         ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
 
-        // hanya melakukan 1x request ke database
-        return employeeRepository.findEmail(responseLogin.getEmail()).equals(login.getEmail());
+        if (responseLogin.getEmail().equals(login.getEmail())) {
+            return "Login Successfully";
+        } else {
+            return "Login Failed";
+        }
     }
+
 
     @PostMapping("account/forgot-password")
     public String checkEmail(@RequestBody ForgotPassword forgotPassword, @RequestHeader(name = "fp-nsr") String token) {
         if (token.equals(parameterRepository.findById("fp-nsr").get().getValue())) {
-            String emailExist = employeeRepository.findEmail(forgotPassword.getEmail());
-            if (emailExist.equals(forgotPassword.getEmail())) {
-                // menggunakan line dibawah ini untuk get data sekaligus dengan cek email
-                User user = userRepository.findUserByEmail(emailExist);
+            // menggunakan line dibawah ini untuk get data sekaligus dengan cek email
+            User user = userRepository.findUserByEmail(forgotPassword.getEmail());
+            if (user.getEmployee().getEmail().equals(forgotPassword.getEmail())) {
                 user.setPassword(forgotPassword.getPassword());
-
                 userRepository.save(user);
-                return "Password telah diupdate";
+                return "Password succesfully update";
             }
         }
         return "Error";
