@@ -38,6 +38,8 @@ public class AccountRestController {
         String password = userRepository.findPassword(changePassword.getOldPassword());
         User user = userRepository.findByEmail(changePassword.getEmail());
 
+        // harus menggunakan 1x request saja untuk mendapatkan email dan password
+
         if (email.equals(null) && password.equals(null)) {
             return "password atau email tidak ada";
         } else if (changePassword.getNewPassword() == password) {
@@ -79,6 +81,8 @@ public class AccountRestController {
     @PostMapping("account/authenticating")
     public boolean login(@RequestBody Login login) {
         ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
+
+        // hanya melakukan 1x request ke database
         return employeeRepository.findEmail(responseLogin.getEmail()).equals(login.getEmail());
     }
 
@@ -87,6 +91,7 @@ public class AccountRestController {
         if (token.equals(parameterRepository.findById("fp-nsr").get().getValue())) {
             String emailExist = employeeRepository.findEmail(forgotPassword.getEmail());
             if (emailExist.equals(forgotPassword.getEmail())) {
+                // menggunakan line dibawah ini untuk get data sekaligus dengan cek email
                 User user = userRepository.findUserByEmail(emailExist);
                 user.setPassword(forgotPassword.getPassword());
 
