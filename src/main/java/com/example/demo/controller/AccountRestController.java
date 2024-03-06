@@ -12,6 +12,7 @@ import com.example.demo.dto.Login;
 import com.example.demo.model.User;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.dto.Register;
+import com.example.demo.dto.ResponseChangePassword;
 import com.example.demo.dto.ResponseLogin;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
@@ -28,33 +29,31 @@ public class AccountRestController {
     private RoleRepository roleRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
-
     @Autowired
     private ParameterRepository parameterRepository;
 
     @PostMapping("account/form-change-password")
     public String checkPassword(@RequestBody ChangePassword changePassword) {
-        String email = employeeRepository.findEmail(changePassword.getEmail());
-        String password = userRepository.findPassword(changePassword.getOldPassword());
-        User user = userRepository.findByEmail(changePassword.getEmail());
-
+        ResponseChangePassword responChangePassword = userRepository.findUser(changePassword.getEmail());
         // harus menggunakan 1x request saja untuk mendapatkan email dan password
 
-        if (email.equals(null) && password.equals(null)) {
+        if (responChangePassword.getEmail().equals(null )&& responChangePassword.getPassword().equals(null)) {
             return "password atau email tidak ada";
-        } else if (changePassword.getNewPassword() == password) {
-            return "password baru anda tidak boleh sama";
-        } else if (!changePassword.getOldPassword().equals(password)) {
+        }else if (changePassword.getNewPassword()== responChangePassword.getPassword()) {
+            return "password baru anda tidak boleh sama dengan password lama anda";
+        }else if (!changePassword.getOldPassword().equals(responChangePassword.getPassword())) {
             return "password lama anda tidak sesuai";
-        } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
-            return "tidak boleh kosong";
-        } else {
+        }else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
+            
+        }else{
+            User user = new User();
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
-            return "password baru sudah di simpan";
+            return "berhasil menyimpan password baru";
         }
-
+        return "nice";
     }
+
 
     @PostMapping("account/register")
     public String save(@RequestBody Register register) {
