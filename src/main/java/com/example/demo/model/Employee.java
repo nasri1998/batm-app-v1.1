@@ -48,7 +48,7 @@ public class Employee {
         this.email = email;
     }
 
-    @JsonIgnore
+  
     @OneToOne(mappedBy="employee")
     private User user;
 

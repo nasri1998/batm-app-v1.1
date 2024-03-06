@@ -46,7 +46,7 @@ public class AccountRestController {
         }else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
             
         }else{
-            User user = new User();
+            User user = userRepository.findByEmail(changePassword.getEmail());
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
             return "berhasil menyimpan password baru";
