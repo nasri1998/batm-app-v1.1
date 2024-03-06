@@ -77,10 +77,16 @@ public class AccountRestController {
     }
 
     @PostMapping("account/authenticating")
-    public boolean login(@RequestBody Login login) {
+    public String login(@RequestBody Login login) {
         ResponseLogin responseLogin = employeeRepository.authenticate(login.getEmail());
-        return employeeRepository.findEmail(responseLogin.getEmail()).equals(login.getEmail());
+
+        if (responseLogin.getEmail().equals(login.getEmail())) {
+            return "Login Successfully";
+        } else {
+            return "Login Error";
+        }
     }
+
 
     @PostMapping("account/forgot-password")
     public String checkEmail(@RequestBody ForgotPassword forgotPassword, @RequestHeader(name = "fp-nsr") String token) {
