@@ -30,7 +30,7 @@ public class RegionRestController {
 
     @GetMapping("regions")
     public ResponseEntity<Object> get() {
-        return CustomResponse.responseEntity(HttpStatus.OK, "Data Successfully Fetched", regionRepository.findAll());
+        return CustomResponse.generate(HttpStatus.OK, "Data Successfully Fetched", regionRepository.findAll());
     }
 
     @GetMapping("region/{id}")
@@ -43,10 +43,10 @@ public class RegionRestController {
         if(token.equals(parameterRepository.findById("x-token").get().getValue())) {
             Region result = regionRepository.save(region);
             if (regionRepository.findById(result.getId()).isPresent()) {
-                return CustomResponse.responseEntity(HttpStatus.OK, "Data Successfully Added");
+                return CustomResponse.generate(HttpStatus.OK, "Data Successfully Added");
             }
         }
-        return CustomResponse.responseEntity(HttpStatus.OK, "Error Adding Data");
+        return CustomResponse.generate(HttpStatus.OK, "Error Adding Data");
     }
 
     @DeleteMapping("region/{id}")
