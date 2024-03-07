@@ -22,7 +22,7 @@ import com.example.demo.repository.UserRepository;
 @Controller
 @RequestMapping("account")
 public class AccountController {
-    @Autowired
+    @Autowired//depedencies injection berubah ke object
     private EmployeeRepository employeeRepository;
 
     @Autowired
