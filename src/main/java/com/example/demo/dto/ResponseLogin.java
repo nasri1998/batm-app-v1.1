@@ -3,6 +3,8 @@ package com.example.demo.dto;
 public class ResponseLogin {
     private String name;
     private String email;
+    private String password;
+    private String role;
     
 
     public ResponseLogin(String name, String email) {
@@ -29,4 +31,21 @@ public class ResponseLogin {
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    
 }
