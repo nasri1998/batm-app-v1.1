@@ -30,7 +30,8 @@ public class ApplicationSecurityConfig {
 
     // white listing = adalah akses yang boleh masuk
     // black listing = adalah akses yang tidak boleh masuk atau inputan
-    // .authenticated = sembarang akses atau yang login saja bisa akses
+    // .authenticated = sembarang akses tanpa login
+    // .anyrequest =
     // permit all = bisa akses tanpa login
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,12 +40,11 @@ public class ApplicationSecurityConfig {
                 .authorizeHttpRequests((auth) -> {
                     try {
                         auth
-                                .antMatchers("/authenticating","/register").authenticated()
+                               .antMatchers("/account/authenticating","/account/register").authenticated()
                                 // .antMatchers("/api/regions").hasAuthority("manager")
-                                .anyRequest()
-                                .permitAll()
-                                
-                                .and()
+                               .anyRequest()
+                               .permitAll()
+                               .and()
                                .exceptionHandling()
                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                .and()
