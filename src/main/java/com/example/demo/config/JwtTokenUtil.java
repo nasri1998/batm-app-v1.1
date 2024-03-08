@@ -22,7 +22,7 @@ public class JwtTokenUtil implements Serializable {
 
 	private static final long serialVersionUID = -2550185165626007488L;
 
-	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+	public static final long JWT_TOKEN_VALIDITY = 1 * 60 * 60;
 
 	@Value("test")
 	private String secret;
@@ -74,10 +74,10 @@ public class JwtTokenUtil implements Serializable {
 	public String generateToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
-		if (roles.contains(new SimpleGrantedAuthority("Manager"))) {
+		if (roles.contains(new SimpleGrantedAuthority("manager"))) {
             claims.put("role", "manager");
         }
-        if (roles.contains(new SimpleGrantedAuthority("Staff"))) {
+        if (roles.contains(new SimpleGrantedAuthority("staff"))) {
             claims.put("role", "staff");
         }
 		if (roles.contains(new SimpleGrantedAuthority("admin"))) {
@@ -87,6 +87,7 @@ public class JwtTokenUtil implements Serializable {
 		// 	String fullName = ((MyUserDetails) userDetails).getFullname();
 		// 	claims.put("fullname", fullName);
 		// }
+		System.out.println("4" + userDetails.getUsername());
 		return doGenerateToken(claims, userDetails.getUsername());
 	}
 	//while creating the token -

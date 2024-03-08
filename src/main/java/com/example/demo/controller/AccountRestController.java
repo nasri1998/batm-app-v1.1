@@ -109,11 +109,20 @@ public class AccountRestController {
     public ResponseEntity<Object> login(@RequestBody Login login) {
 
         try {
+            // authenticate(...): Ini adalah metode yang dipanggil pada objek authenticationManager untuk melakukan otentikasi.
+            //  Metode ini menerima objek Authentication, yang mewakili kredensial pengguna yang ingin diautentikasi. Dalam contoh ini, 
+            // UsernamePasswordAuthenticationToken digunakan, yang merupakan implementasi dari Authentication 
+            // dan menyediakan kredensial berupa nama pengguna dan kata sandi.
+
+            //intinya adalah pengecekan pengguna/user
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+             UserDetails userDetails = this.userDetails.loadUserByUsername(login.getEmail());
+            // userDetails.loadUserByUsername(login.getEmail());
 
-            userDetails.loadUserByUsername(login.getEmail());
+
+            System.out.println("3" +userDetails.getUsername());
             
             final String token = jwtTokenUtil.generateToken(userDetails);
             return CustomResponse.generate(HttpStatus.OK, "berhasil login",token);

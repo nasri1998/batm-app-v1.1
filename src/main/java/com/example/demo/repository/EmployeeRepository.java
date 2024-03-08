@@ -1,10 +1,12 @@
 package com.example.demo.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.dto.ResponseLogin;
+
 import com.example.demo.model.Employee;
 
 
@@ -24,4 +26,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>{
             """
     )
     public Employee authenticate(String email);
+    //  Optional<Employee> findByEmail(String email);
 } 
