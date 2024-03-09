@@ -71,24 +71,24 @@ public class JwtTokenUtil implements Serializable {
 
 	//generate token for user
   //generate token for user
-	public String generateToken(UserDetails userDetails) {
+	public String generateToken(MyUserDetails myUserDetails) {
 		Map<String, Object> claims = new HashMap<>();
-		Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
-		if (roles.contains(new SimpleGrantedAuthority("manager"))) {
+		// Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
+		if (myUserDetails.getAuthorities().contains(("manager"))) {
             claims.put("role", "manager");
         }
-        if (roles.contains(new SimpleGrantedAuthority("staff"))) {
+        if (myUserDetails.getAuthorities().contains(new SimpleGrantedAuthority("staff"))) {
             claims.put("role", "staff");
         }
-		if (roles.contains(new SimpleGrantedAuthority("admin"))) {
+		if (myUserDetails.getAuthorities().contains(new SimpleGrantedAuthority("admin"))) {
             claims.put("role", "admin");
         }
 		// if (userDetails instanceof MyUserDetails) {
 		// 	String fullName = ((MyUserDetails) userDetails).getFullname();
 		// 	claims.put("fullname", fullName);
 		// }
-		System.out.println("4" + userDetails.getUsername());
-		return doGenerateToken(claims, userDetails.getUsername());
+		System.out.println("4" + myUserDetails.getUsername());
+		return doGenerateToken(claims, myUserDetails.getUsername());
 	}
 	//while creating the token -
 	//1. Define  claims of the token, like Issuer, Expiration, Subject, and the ID

@@ -42,6 +42,14 @@ public class MyUserDetails implements UserDetails, UserDetailsService {
         return grantedAuthority;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Employee responseLogin = employeeRepository.authenticate(username);

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import org.hibernate.dialect.MySQL55Dialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,8 +56,7 @@ public class AccountRestController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-	private MyUserDetails userDetails;
-
+    private MyUserDetails myUserDetails;
 
     @Autowired
 	private JwtTokenUtil jwtTokenUtil;
@@ -118,13 +118,12 @@ public class AccountRestController {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-             UserDetails userDetails = this.userDetails.loadUserByUsername(login.getEmail());
-            // userDetails.loadUserByUsername(login.getEmail());
 
-
-            System.out.println("3" +userDetails.getUsername());
+            myUserDetails = (MyUserDetails) myUserDetails.loadUserByUsername(login.getEmail());
+            //  UserDetails userDetails = this.userDetails.loadUserByUsername(login.getEmail());
+            System.out.println("3" +myUserDetails.getUsername());
             
-            final String token = jwtTokenUtil.generateToken(userDetails);
+            final String token = jwtTokenUtil.generateToken(myUserDetails);
             return CustomResponse.generate(HttpStatus.OK, "berhasil login",token);
         } catch (Exception e) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Cannot login", null);
