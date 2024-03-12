@@ -35,66 +35,59 @@ public class ApplicationSecurityConfig {
     // white listing = adalah akses yang boleh masuk
     // black listing = adalah akses yang tidak boleh masuk atau inputan
     // .anyrequest = jenis reques apapun
-    //authenticate = boleh di lihat atau di akses hanya dengan login tanpa liat role
+    // authenticate = boleh di lihat atau di akses hanya dengan login tanpa liat
+    // role
     // permit all = bisa akses tanpa login
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeHttpRequests((auth) -> {
-                    try {
-                        auth
-                                .antMatchers("/account/authenticating", "/account/register")
-                                .authenticated()
-                                .antMatchers("api/regions").hasAuthority("manager")
-                                .anyRequest()
-                                .permitAll()
-                                .and()
-                                .exceptionHandling()
-                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                                .and()
-                                .sessionManagement()
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-                        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-        return http.build();
-    }
-
     // @Bean
-    // public SecurityFilterChain filterChain(HttpSecurity http) {
-    //     try {
-    //         http
-    //             .csrf().disable()
-    //             .authorizeRequests((auth) -> 
-    //                 auth
-    //                     .antMatchers("/account/authenticating", "/account/register")
-    //                     .authenticated()
-    //                     .antMatchers("api/regions").hasAuthority("manager")
-    //                     .anyRequest()
-    //                     .permitAll()
-    //             )
-                
-                
-    //             .sessionManagement()
-    //                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    //             .and()
-                
-    //             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-    //             .exceptionHandling()
-    //                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
-    
-    //         return http.build();
-    //     } catch (Exception e) {
-    //         // Handle exception here
-    //         e.printStackTrace();
-    //         return null; // Or handle as per your requirement
-    //     }
+    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    // http
+    // .csrf().disable()
+    // .authorizeHttpRequests((auth) -> {
+    // try {
+    // auth
+    // .antMatchers("/account/authenticating", "/account/register")
+    // .authenticated()
+    // .antMatchers("api/regions").hasAuthority("manager")
+    // .anyRequest()
+    // .permitAll()
+    // .and()
+    // .exceptionHandling()
+    // .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+    // .and()
+    // .sessionManagement()
+    // .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+    // http.addFilterBefore(jwtRequestFilter,
+    // UsernamePasswordAuthenticationFilter.class);
+    // } catch (Exception e) {
+    // throw new RuntimeException(e);
     // }
-    
+    // });
+    // return http.build();
+    // }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) {
+        try {
+
+            http
+                    .csrf().disable()
+                    .authorizeRequests((requests) -> requests
+                            .antMatchers("/account/authenticating", "/account/register").authenticated()
+                            .antMatchers("/api/regions").hasAuthority("admin")
+                            .anyRequest().permitAll()
+                    )
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                    .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                    .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
+
+            return http.build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; 
+        }
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

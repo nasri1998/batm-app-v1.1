@@ -121,7 +121,6 @@ public class AccountRestController {
 
             myUserDetails = (MyUserDetails) myUserDetails.loadUserByUsername(login.getEmail());
             //  UserDetails userDetails = this.userDetails.loadUserByUsername(login.getEmail());
-            System.out.println("3" +myUserDetails.getUsername());
             
             final String token = jwtTokenUtil.generateToken(myUserDetails);
             return CustomResponse.generate(HttpStatus.OK, "berhasil login",token);
