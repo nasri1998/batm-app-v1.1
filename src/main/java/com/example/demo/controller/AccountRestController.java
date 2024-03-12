@@ -1,18 +1,25 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.config.JwtTokenUtil;
+import com.example.demo.config.MyUserDetails;
 import com.example.demo.dto.ChangePassword;
 import com.example.demo.dto.ForgotPassword;
 import com.example.demo.dto.Login;
@@ -24,6 +31,7 @@ import com.example.demo.dto.ResponseChangePassword;
 import com.example.demo.dto.ResponseLogin;
 import com.example.demo.handler.CustomResponse;
 import com.example.demo.model.Employee;
+import com.example.demo.model.JwtResponse;
 import com.example.demo.model.Role;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
@@ -43,6 +51,10 @@ public class AccountRestController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private MyUserDetails myUserDetails;
+    @Autowired 
+    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("account/form-change-password")
     public ResponseEntity<Object> checkPassword(@RequestBody ChangePassword changePassword) {
@@ -90,14 +102,23 @@ public class AccountRestController {
 
     @PostMapping("account/authenticating")
     public ResponseEntity<Object> login(@RequestBody Login login) {
+        
         try {
+            
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            // myUserDetails.loadUserByUsername(login.getEmail());
 
-            return CustomResponse.generate(HttpStatus.OK, "Login Successful");
+            myUserDetails = (MyUserDetails) myUserDetails.loadUserByUsername(login.getEmail());
+
+		final String token = jwtTokenUtil.generateToken(myUserDetails);
+
+		return ResponseEntity.ok(new JwtResponse(token));
         } catch (Exception e) {
-            return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Login Failed");
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Login Failed", null);
         }
+
+        
     }
 
     @PostMapping("account/forgot-password")

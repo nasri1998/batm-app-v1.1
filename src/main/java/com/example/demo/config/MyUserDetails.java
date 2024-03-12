@@ -78,4 +78,12 @@ public class MyUserDetails implements UserDetails, UserDetailsService {
     public boolean isEnabled() {
         return true;
     }
+
+    public EmployeeRepository getEmployeeRepository() {
+        return employeeRepository;
+    }
+
+    public void setEmployeeRepository(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 }

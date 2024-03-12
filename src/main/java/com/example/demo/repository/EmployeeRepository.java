@@ -1,15 +1,19 @@
 package com.example.demo.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.dto.ResponseLogin;
 import com.example.demo.model.Employee;
-
+import java.util.List;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer>{
+    Optional<Employee> findByEmail(String email);
+
     @Query(value = "SELECT email FROM tb_m_employee WHERE email = ?1", nativeQuery = true)
     public String findEmail(String email);
     
