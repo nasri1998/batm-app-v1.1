@@ -139,7 +139,8 @@ public class AccountRestController {
 
 		final String token = jwtTokenUtil.generateToken(myUserDetails);
 
-		return ResponseEntity.ok(new JwtResponse(token));
+		// return ResponseEntity.ok(new JwtResponse(token));
+        return CustomResponse.generate(HttpStatus.OK, "Login Successfully",token);
         } catch (Exception e) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Login Failed", null);
         }
