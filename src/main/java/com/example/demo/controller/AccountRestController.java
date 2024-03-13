@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hibernate.dialect.MySQL55Dialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,22 +63,40 @@ public class AccountRestController {
     @Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
+    @Autowired
+    private HttpServletRequest request;
+
     @PostMapping("account/form-change-password")
     public ResponseEntity<Object> checkPassword(@RequestBody ChangePassword changePassword) {
-        ResponseChangePassword responChangePassword = userRepository.findUser(changePassword.getEmail());
+
+        final String requestTokenHeader = request.getHeader("Authorization");        
+		String username = null;
+		String jwtToken = null;
+        jwtToken = requestTokenHeader.substring(7);
+        username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+
+        ResponseChangePassword responChangePassword = userRepository.findUser(username);
+
+       String newPassword = passwordEncoder.encode(changePassword.getNewPassword()); 
+
+       changePassword.setNewPassword(newPassword);
+
+
+
+        System.out.println("respon cuy " +responChangePassword.getEmail());
         // harus menggunakan 1x request saja untuk mendapatkan email dan password
         if (responChangePassword.getEmail().equals(null) && responChangePassword.getPassword().equals(null)) {
             return CustomResponse.generate(HttpStatus.OK, "user not found");
         } else if (changePassword.getNewPassword().equals(responChangePassword.getPassword())) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST,
                     "The new password cannot be the same as the old password");
-        } else if (!changePassword.getOldPassword().equals(responChangePassword.getPassword())) {
+        } else if (passwordEncoder.matches(changePassword.getOldPassword(),responChangePassword.getPassword())== false) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST, "password does not match");
         } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST,
                     "the field cannot be empty, check your input");
         } else {
-            User user = userRepository.findByEmail(changePassword.getEmail());
+            User user = userRepository.findByEmail(username);
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
             return CustomResponse.generate(HttpStatus.CREATED, "successfully changed your password");

@@ -97,9 +97,9 @@ public class JwtTokenUtil implements Serializable {
 	//   compaction of the JWT to a URL-safe string
 
 	//validate token
-	public Boolean validateToken(String token, MyUserDetails myUserDetails) {
+	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username = getUsernameFromToken(token);
 
-		return (username.equals(myUserDetails.getUsername()) && !isTokenExpired(token));
+		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 }

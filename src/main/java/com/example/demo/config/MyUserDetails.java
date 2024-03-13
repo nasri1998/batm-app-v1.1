@@ -20,11 +20,9 @@ public class MyUserDetails implements UserDetails, UserDetailsService {
     private String username;
     private String password;
     private GrantedAuthority authority;
-    
+
     @Autowired
     private EmployeeRepository employeeRepository;
-
-
 
     public MyUserDetails(String username, String password, String authority) {
         this.username = username;
@@ -37,7 +35,7 @@ public class MyUserDetails implements UserDetails, UserDetailsService {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> grantedAuthority = new HashSet<>();   
+        Set<GrantedAuthority> grantedAuthority = new HashSet<>();
         grantedAuthority.add(authority);
         return grantedAuthority;
     }
@@ -52,13 +50,23 @@ public class MyUserDetails implements UserDetails, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Employee responseLogin = employeeRepository.authenticate(username);
+        Employee responseLogin = new Employee();
+        try { 
+            responseLogin = employeeRepository.authenticate(username);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            responseLogin = employeeRepository.authenticate(username);
+        }
 
-        System.out.println("6"+ responseLogin.getEmail());
-        System.out.println("7"+ responseLogin.getUser().getPassword());
-        return new MyUserDetails(responseLogin.getEmail(), 
-                                 responseLogin.getUser().getPassword(),
-                                 responseLogin.getUser().getRole().getName());
+        // System.out.println("6"+ responseLogin.getEmail());
+        // System.out.println("7"+ responseLogin.getUser().getPassword());
+        return new MyUserDetails(responseLogin.getEmail(),
+        responseLogin.getUser().getPassword(),
+        responseLogin.getUser().getRole().getName());
+        // return new MyUserDetails("frizky861@gmail.com",
+        //         "$2a$10$6k.Jfgv6ibW4lsgccJLtKeCQ4uPM80o.iXdCFtIJeEbNUu7gKeOSK",
+        //         "manager");
     }
 
     @Override
@@ -91,4 +99,11 @@ public class MyUserDetails implements UserDetails, UserDetailsService {
         return true;
     }
 
+    public EmployeeRepository getEmployeeRepository() {
+        return employeeRepository;
+    }
+
+    public void setEmployeeRepository(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 }
