@@ -5,10 +5,6 @@ public class ChangePassword {
     private String oldPassword;
     private String newPassword;
 
-   
-
-
-
     public String getOldPassword() {
         return oldPassword;
     }
