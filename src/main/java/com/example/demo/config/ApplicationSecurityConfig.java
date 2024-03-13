@@ -1,8 +1,11 @@
 package com.example.demo.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -31,6 +34,8 @@ public class ApplicationSecurityConfig {
 
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationSecurityConfig.class);
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -76,11 +81,12 @@ public class ApplicationSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
-
             http
                     .csrf().disable()
                     .authorizeRequests((requests) -> requests
-                            .antMatchers("/account/authenticating", "/account/register").authenticated()
+                            .antMatchers("/account/authenticating", "/account/register", "/account/forgot-password")
+                            .authenticated()
+                            // .antMatchers("/api/account/forgot-password").permitAll()
                             .antMatchers("/api/regions").hasAuthority("Staff")
                             .anyRequest().permitAll()
                     )
@@ -88,12 +94,11 @@ public class ApplicationSecurityConfig {
                     .and()
                     .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                     .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
-
+                    
             return http.build();
         } catch (Exception e) {
             e.printStackTrace();
             return null; 
         }
     }
-
 }
