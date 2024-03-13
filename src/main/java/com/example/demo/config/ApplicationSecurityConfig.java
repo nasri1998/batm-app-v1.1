@@ -33,8 +33,6 @@ public class ApplicationSecurityConfig {
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationSecurityConfig.class);
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
