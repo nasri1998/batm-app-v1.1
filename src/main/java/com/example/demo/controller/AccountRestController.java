@@ -119,7 +119,13 @@ public class AccountRestController {
                 Role role = roleRepository.findById(5).orElse(null);
                 user.setRole(role);
                 userRepository.save(user);
-                return CustomResponse.generate(HttpStatus.OK, "Register Successfully");
+                Boolean resultUser = userRepository.findById(employee.getId()).isPresent();
+                if (resultUser) {
+                    return CustomResponse.generate(HttpStatus.OK, "Register Successfully");
+                }else{
+                    employeeRepository.deleteById(employee.getId());
+                    return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Register Failed");
+                }
             }
         }
         return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Register Failed");
