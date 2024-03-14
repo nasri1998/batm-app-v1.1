@@ -1,0 +1,185 @@
+<html>
+
+<head>
+    <!-- bootsrap css disini -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <button class="btn btn-primary" onclick="show()">CREATE</button>
+        <table id="myTable" class="table table-success table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>NAME</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Region Form</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group" hidden>
+                        <label>ID</label>
+                        <input id="id" class="form-control" name="id" type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label>NAME</label>
+                        <input id="name" class="form-control" name="name" type="text" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="submit()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <!-- script js disini -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- script buatan sendiri -->
+    <script>
+        let table = null;
+        $(document).ready(function () {
+            table = $("#myTable").DataTable({
+                "ajax": {
+                    "url": "/api/regions",
+                    "datatype": "json",
+                    "headers": {
+                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiU3RhZmYiLCJzdWIiOiJkaWtpLmJ1bGluQGJhdG1hbmRpcmkuY29tIiwiaWF0IjoxNzEwNDA1NDA1LCJleHAiOjE3MTA0MjM0MDV9.BFTjB83yqJ432hAcjA6G65eS9rRL6SrRDaOyIYzoxqE"
+                    },
+                    "dataSrc": "data"
+                },
+                "columnDefs": [
+                    {
+                        "targets": 0,
+                        "orderable": false,
+                        "searchable": false
+                    },
+                    {
+                        "targets": 2,
+                        "orderable": false,
+                        "searchable": false
+                    }
+                ],
+                "columns": [
+                    { "data": "id", "name": "id", "autowidth": true },
+                    { "data": "name", "name": "name", "autowidth": true },
+                    {
+                        "render": function (data, type, full, meta) {
+                            var html = '';
+                            html += `<a href="#" onclick="get(${full.id})">Edit</a> | <a href="#" onclick="remove(${full.id})">Delete</a>`;
+                            return html;
+                        }
+                    }
+                ]
+            });
+        })
+
+        let show = () => {
+            $("#modal").modal("show");
+            $("#id").val("");
+            $("#name").val("");
+        }
+
+        let get = (id) => {
+            $.ajax({
+                url: `/api/region/${id}`,
+                headers: {
+                    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiU3RhZmYiLCJzdWIiOiJkaWtpLmJ1bGluQGJhdG1hbmRpcmkuY29tIiwiaWF0IjoxNzEwNDA1NDA1LCJleHAiOjE3MTA0MjM0MDV9.BFTjB83yqJ432hAcjA6G65eS9rRL6SrRDaOyIYzoxqE"
+                },
+                contentType: "application/json"
+            }).done((response) => {
+                $("#modal").modal("show");
+                $("#id").val(response.data.id);
+                $("#name").val(response.data.name);
+            }).fail((error) => {
+                console.log(error)
+            })
+        }
+
+        let submit = () => {
+            let region = {
+                id: $("#id").val(),
+                name: $("#name").val()
+            }
+            $.ajax({
+                url: `/api/region`,
+                type: "POST",
+                headers: {
+                    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiU3RhZmYiLCJzdWIiOiJkaWtpLmJ1bGluQGJhdG1hbmRpcmkuY29tIiwiaWF0IjoxNzEwNDA1NDA1LCJleHAiOjE3MTA0MjM0MDV9.BFTjB83yqJ432hAcjA6G65eS9rRL6SrRDaOyIYzoxqE"
+                },
+                contentType: "application/json",
+                data: JSON.stringify(region)
+            }).done((response) => {
+                if (response.status == "OK") {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Data has been saved",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    $("#modal").modal("hide");
+                    table.ajax.reload();
+                }
+            }).fail((error) => {
+                console.log(error)
+            })
+        }
+
+        let remove = (id) => {
+            Swal.fire({
+                icon: "info",
+                title: "Do you want to delete this region?",
+                showDenyButton: true,
+                confirmButtonText: "Yes, delete it!",
+                denyButtonText: `Cancel`
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/api/region/${id}`,
+                        type: "DELETE",
+                        headers: {
+                            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiU3RhZmYiLCJzdWIiOiJkaWtpLmJ1bGluQGJhdG1hbmRpcmkuY29tIiwiaWF0IjoxNzEwNDA1NDA1LCJleHAiOjE3MTA0MjM0MDV9.BFTjB83yqJ432hAcjA6G65eS9rRL6SrRDaOyIYzoxqE"
+                        },
+                        contentType: "application/json"
+                    }).done((response) => {
+                        if (response.status == "OK") {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Data has been deleted",
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            table.ajax.reload();
+                        }
+                    }).fail((error) => {
+                        console.log(error)
+                    })
+                }
+            });
+        }
+    </script>
+</footer>
+
+</html>

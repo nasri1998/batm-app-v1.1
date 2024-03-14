@@ -33,23 +33,24 @@ public class RegionRestController {
 
     @GetMapping("region/{id}")
     public ResponseEntity<Object> get(@PathVariable(required = true) Integer id) {
-        return CustomResponse.generate(HttpStatus.OK, "id berhasil ditemukan", regionRepository.findById(id).orElse(null));
+        return CustomResponse.generate(HttpStatus.OK, "id berhasil ditemukan",
+                regionRepository.findById(id).orElse(null));
     }
 
     @PostMapping("region")
-    public ResponseEntity<Object> save(@RequestBody Region region, @RequestHeader(name = "x-token") String token) {
-        if(token.equals(parameterRepository.findById("x-token").get().getValue())) {
-            Region result = regionRepository.save(region);
-            if (regionRepository.findById(result.getId()).isPresent()) {
-                return CustomResponse.generate(HttpStatus.OK, "Data Successfully Added");
-            }
+    public ResponseEntity<Object> save(@RequestBody Region region) {
+        Region result = regionRepository.save(region);
+        if (regionRepository.findById(result.getId()).isPresent()) {
+            return CustomResponse.generate(HttpStatus.OK, "Data Successfully Added");
         }
+
         return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Error Adding Data");
     }
 
     @DeleteMapping("region/{id}")
     public ResponseEntity<Object> delete(@PathVariable(required = true, name = "id") Integer id) {
         regionRepository.deleteById(id);
-        return CustomResponse.generate(HttpStatus.OK, "id berhasil dihapus", !regionRepository.findById(id).isPresent());
+        return CustomResponse.generate(HttpStatus.OK, "id berhasil dihapus",
+                !regionRepository.findById(id).isPresent());
     }
 }
