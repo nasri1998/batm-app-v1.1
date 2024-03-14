@@ -43,7 +43,7 @@ public class JwtTokenUtil implements Serializable{
 
     //for retrieveing any information from token we will need the secret key
 	private Claims getAllClaimsFromToken(String token) {
-		System.out.println(" claims string inside getAllClaimsFromToken is " + Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody());
+		// System.out.println(" claims string inside getAllClaimsFromToken is " + Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody());
 
 		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 	}
