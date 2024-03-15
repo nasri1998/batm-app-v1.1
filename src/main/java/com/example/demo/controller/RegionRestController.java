@@ -37,8 +37,7 @@ public class RegionRestController {
     }
 
     @PostMapping("region")
-    public ResponseEntity<Object> save(@RequestBody Region region, @RequestHeader(name = "x-token") String token) {
-        if(token.equals(parameterRepository.findById("x-token").get().getValue())) {
+    public ResponseEntity<Object> save(@RequestBody Region region) {{
             Region result = regionRepository.save(region);
             if (regionRepository.findById(result.getId()).isPresent()) {
                 return CustomResponse.generate(HttpStatus.OK, "Data Successfully Added");
