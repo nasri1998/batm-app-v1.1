@@ -18,6 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -51,39 +54,18 @@ public class ApplicationSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // authorization
-    // @Bean
-    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    //     http
-    //         .csrf().disable()
-    //         .authorizeHttpRequests()
-    //         .antMatchers("/api/account/authenticating", "/api/account/register")
-    //         .permitAll()
-    //         .antMatchers("api/regions").hasAuthority("Staff")
-    //         .anyRequest()
-    //         .authenticated()
-    //         .and()
-    //         .exceptionHandling()
-    //         .authenticationEntryPoint(authenticationEntryPoint)
-    //         .and()
-    //         // .authenticationProvider(authenticationProvider())
-    //         .sessionManagement()
-    //         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    //         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-            
-    // return http.build();
-    // }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
             http
+                    .cors().and()
                     .csrf().disable()
                     .authorizeRequests((requests) -> requests
                             .antMatchers("/account/authenticating", "/account/register", "/account/forgot-password")
                             .authenticated()
                             // .antMatchers("/api/account/forgot-password").permitAll()
                             .antMatchers("/api/regions").hasAuthority("Staff")
+                            .antMatchers("/api/demos").hasAuthority("Staff")
                             .anyRequest().permitAll()
                     )
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -96,5 +78,16 @@ public class ApplicationSecurityConfig {
             e.printStackTrace();
             return null; 
         }
+    }
+
+    @Bean
+    CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }
