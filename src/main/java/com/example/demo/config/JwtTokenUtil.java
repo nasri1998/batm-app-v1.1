@@ -2,14 +2,11 @@ package com.example.demo.config;
 
 import java.io.Serializable;
 import java.security.Key;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -46,14 +43,16 @@ public class JwtTokenUtil implements Serializable{
 
     //for retrieveing any information from token we will need the secret key
 	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
+		System.out.println(" claims string inside getAllClaimsFromToken is " + Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody());
+
+		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 	}
 
 	//getsigninkey and decode
-	private Key getSignInKey(){
-		byte[] keyBytes = Decoders.BASE64.decode(secret);
-		return Keys.hmacShaKeyFor(keyBytes);
-	}
+	// private Key getSignInKey(){
+	// 	byte[] keyBytes = Decoders.BASE64.decode(secret);
+	// 	return Keys.hmacShaKeyFor(keyBytes);
+	// }
 
     //check if the token has expired
 	private Boolean isTokenExpired(String token) {
@@ -62,33 +61,24 @@ public class JwtTokenUtil implements Serializable{
 	}
 
 	//generate token for user
-	public String doGenerateToken(Map<String, Object> claims, 
-								String subject) {
-		return Jwts.builder().setClaims(claims).setSubject(subject)
-		.setIssuedAt(new Date(System.currentTimeMillis()))
-		.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-		.signWith(getSignInKey(), SignatureAlgorithm.HS256)
-		.compact();
-	}
-
-	public String generateToken(MyUserDetails userDetails) {
+	public String generateToken(MyUserDetails myUserDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		// Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
-
-		if (userDetails.getAuthorities().contains(new SimpleGrantedAuthority("Manager"))) {
-            claims.put("Role", "Manager");
+		if (myUserDetails.getAuthorities().contains("manager")) {
+            claims.put("role", "manager");
+        }else if (myUserDetails.getAuthorities().contains("staff")) {
+            claims.put("role", "staff");
+        }else{
+            claims.put("role", "admin");
         }
-        if (userDetails.getAuthorities().contains(new SimpleGrantedAuthority("Staff"))) {
-            claims.put("Role", "Staff");
-        }
-		// if (roles.contains(new SimpleGrantedAuthority("admin"))) {
-        //     claims.put("Role", "admin");
-        // }
 		// if (userDetails instanceof MyUserDetails) {
 		// 	String fullName = ((MyUserDetails) userDetails).getFullname();
 		// 	claims.put("fullname", fullName);
 		// }
-		return doGenerateToken(claims, userDetails.getUsername());
+		return Jwts.builder().setClaims(claims).setSubject(myUserDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+				.signWith(SignatureAlgorithm.HS512, secret).compact();
+		
 	}
 
 	//while creating the token -
