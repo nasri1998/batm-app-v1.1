@@ -75,15 +75,12 @@ public class AccountRestController {
         username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 
         ResponseChangePassword responChangePassword = userRepository.findUser(username);
-
+        if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
+            return CustomResponse.generate(HttpStatus.BAD_REQUEST,
+                    "the field cannot be empty, check your input");
+        } 
        String newPassword = passwordEncoder.encode(changePassword.getNewPassword()); 
-
        changePassword.setNewPassword(newPassword);
-
-
-
-        System.out.println("respon cuy " +responChangePassword.getEmail());
-        // harus menggunakan 1x request saja untuk mendapatkan email dan password
         if (responChangePassword.getEmail().equals(null) && responChangePassword.getPassword().equals(null)) {
             return CustomResponse.generate(HttpStatus.OK, "user not found");
         } else if (changePassword.getNewPassword().equals(responChangePassword.getPassword())) {
@@ -91,10 +88,10 @@ public class AccountRestController {
                     "The new password cannot be the same as the old password");
         } else if (passwordEncoder.matches(changePassword.getOldPassword(),responChangePassword.getPassword())== false) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST, "password does not match");
-        } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
+        }else if (changePassword.getOldPassword().isEmpty() || changePassword.getOldPassword().equals(null)) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST,
                     "the field cannot be empty, check your input");
-        } else {
+        }  else {
             User user = userRepository.findByEmail(username);
             user.setPassword(changePassword.getNewPassword());
             userRepository.save(user);
@@ -139,11 +136,11 @@ public class AccountRestController {
             
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            // myUserDetails.loadUserByUsername(login.getEmail());
+            UserDetails userDetails = myUserDetails.loadUserByUsername(login.getEmail());
 
-            myUserDetails = (MyUserDetails) myUserDetails.loadUserByUsername(login.getEmail());
+            // myUserDetails = (MyUserDetails) myUserDetails.loadUserByUsername(login.getEmail());
 
-		final String token = jwtTokenUtil.generateToken(myUserDetails);
+		final String token = jwtTokenUtil.generateToken(userDetails);
 
 		return ResponseEntity.ok(new JwtResponse(token));
         } catch (Exception e) {

@@ -64,7 +64,7 @@ public class ApplicationSecurityConfig {
                             .authenticated()
                             // .antMatchers("/api/account/forgot-password").permitAll()
                             .antMatchers("/api/regions").hasAuthority("Staff")
-                            .antMatchers("/api/demos").hasAuthority("Staff")
+                            .antMatchers("/api/demos").permitAll()
                             .anyRequest().permitAll()
                     )
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
