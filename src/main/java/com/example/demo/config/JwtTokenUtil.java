@@ -75,20 +75,20 @@ public class JwtTokenUtil implements Serializable {
 
 	//generate token for user
   //generate token for user
-	public String generateToken(MyUserDetails myUserDetails) {
+	public String generateToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		// Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
-		if (myUserDetails.getAuthorities().contains("Manager")) {
+		if (userDetails.getAuthorities().contains(new SimpleGrantedAuthority("Manager"))) {
             claims.put("role", "manager");
         }
-		if (myUserDetails.getAuthorities().contains("Staff")) {
+		if (userDetails.getAuthorities().contains(new SimpleGrantedAuthority("Staff"))) {
             claims.put("role", "staff");
         }
 		// if (userDetails instanceof MyUserDetails) {
 		// 	String fullName = ((MyUserDetails) userDetails).getFullname();
 		// 	claims.put("fullname", fullName);
 		// }
-		return Jwts.builder().setClaims(claims).setSubject(myUserDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
+		return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
 				.signWith(SignatureAlgorithm.HS512, secret).compact();
 		
@@ -100,9 +100,9 @@ public class JwtTokenUtil implements Serializable {
 	//   compaction of the JWT to a URL-safe string
 
 	//validate token
-	public Boolean validateToken(String token, MyUserDetails myUserDetails) {
+	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username = getUsernameFromToken(token);
 
-		return (username.equals(myUserDetails.getUsername()) && !isTokenExpired(token));
+		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 }

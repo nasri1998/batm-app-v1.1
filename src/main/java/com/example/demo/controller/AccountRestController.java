@@ -116,7 +116,7 @@ public class AccountRestController {
                 User user = new User();
                 user.setId(employee.getId());
                 user.setPassword(passwordEncoder.encode(register.getPassword()));
-                Role role = roleRepository.findById(5).orElse(null);
+                Role role = roleRepository.findById(4).orElse(null);
                 user.setRole(role);
                 userRepository.save(user);
                 return CustomResponse.generate(HttpStatus.OK, "Register Successfully");
@@ -135,9 +135,10 @@ public class AccountRestController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             // myUserDetails.loadUserByUsername(login.getEmail());
 
-            myUserDetails = (MyUserDetails) myUserDetails.loadUserByUsername(login.getEmail());
+            // myUserDetails = (MyUserDetails) myUserDetails.loadUserByUsername(login.getEmail());
+            UserDetails userDetails = myUserDetails.loadUserByUsername(login.getEmail());
 
-		final String token = jwtTokenUtil.generateToken(myUserDetails);
+		final String token = jwtTokenUtil.generateToken(userDetails);
 
 		// return ResponseEntity.ok(new JwtResponse(token));
         return CustomResponse.generate(HttpStatus.OK, "Login Successfully",token);
