@@ -38,7 +38,11 @@ public class DemoRestController {
 
         return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Error Adding Data");
     }
-
+    @GetMapping("demo/{id}")
+    public ResponseEntity<Object> get(@PathVariable(required = true) Integer id) {
+        Demo demo = demoRepository.findDemo(id);
+        return CustomResponse.generate(HttpStatus.OK, "id berhasil ditemukan", demo);
+    }
     @PostMapping("demo/{id}")
     public ResponseEntity<Object> editDemo(@RequestBody RequestDemo requestDemo,
             @PathVariable(required = true) Integer id) {
