@@ -8,13 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.handler.CustomResponse;
 import com.example.demo.model.Region;
-import com.example.demo.repository.ParameterRepository;
 import com.example.demo.repository.RegionRepository;
 
 @RestController
@@ -22,9 +20,6 @@ import com.example.demo.repository.RegionRepository;
 public class RegionRestController {
     @Autowired
     private RegionRepository regionRepository;
-
-    @Autowired
-    private ParameterRepository parameterRepository;
 
     @GetMapping("regions")
     public ResponseEntity<Object> get() {

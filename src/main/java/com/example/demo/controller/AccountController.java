@@ -11,7 +11,6 @@ import com.example.demo.dto.Register;
 import com.example.demo.dto.ChangePassword;
 import com.example.demo.dto.ForgotPassword;
 import com.example.demo.dto.Login;
-import com.example.demo.dto.ResponseLogin;
 import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
@@ -70,27 +69,6 @@ public class AccountController {
         model.addAttribute("changePassword", new ChangePassword());
         return "account/form-change-password";
     }
-
-    
-    // @PostMapping("check")
-    // public String check(ChangePassword changePassword, Model model) {
-    //     User user = userRepository.findByEmail(changePassword.getEmail());
-    //     if (user == null) {
-    //         return "account/register";
-    //     } else if (changePassword.getNewPassword() == changePassword.getOldPassword()) {
-    //         model.addAttribute("error", "Password Baru Anda tidak boleh sama");
-    //         return "account/form-change-password";
-    //     } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
-    //         return "redirect:/account/form-change-password";
-    //     } else if (!changePassword.getOldPassword().equals(user.getPassword())) {
-    //         return "redirect:/account/form-change-password";
-    //     } else {
-    //         user.setPassword(changePassword.getNewPassword());
-    //         userRepository.save(user);
-    //     }
-    //     return "redirect:/account/form-change-password";
-    // }
-
 
     @GetMapping("forgot-password")
     public String forgot(Model model) {

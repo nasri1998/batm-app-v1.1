@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.ResponseLogin;
 import com.example.demo.model.Employee;
 import com.example.demo.repository.EmployeeRepository;
 
@@ -60,14 +59,9 @@ public class MyUserDetails implements UserDetails, UserDetailsService {
             responseLogin = employeeRepository.authenticate(username);
         }
 
-        // System.out.println("6"+ responseLogin.getEmail());
-        // System.out.println("7"+ responseLogin.getUser().getPassword());
         return new MyUserDetails(responseLogin.getEmail(),
         responseLogin.getUser().getPassword(),
         responseLogin.getUser().getRole().getName());
-        // return new MyUserDetails("frizky861@gmail.com",
-        //         "$2a$10$6k.Jfgv6ibW4lsgccJLtKeCQ4uPM80o.iXdCFtIJeEbNUu7gKeOSK",
-        //         "manager");
     }
 
     @Override

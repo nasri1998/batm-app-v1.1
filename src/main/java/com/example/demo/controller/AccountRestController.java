@@ -2,15 +2,10 @@ package com.example.demo.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.dialect.MySQL55Dialect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,14 +22,11 @@ import com.example.demo.dto.ChangePassword;
 import com.example.demo.dto.ForgotPassword;
 import com.example.demo.dto.Login;
 import com.example.demo.model.User;
-import com.example.demo.repository.ParameterRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.dto.Register;
 import com.example.demo.dto.ResponseChangePassword;
-import com.example.demo.dto.ResponseLogin;
 import com.example.demo.handler.CustomResponse;
 import com.example.demo.model.Employee;
-import com.example.demo.model.JwtResponse;
 import com.example.demo.model.Role;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
@@ -53,43 +44,44 @@ public class AccountRestController {
     private EmployeeRepository employeeRepository;
 
     @Autowired
-    private ParameterRepository parameterRepository;
-    @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private MyUserDetails myUserDetails;
-    @Autowired 
+
+    @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
     @Autowired
     private HttpServletRequest request;
 
     @PostMapping("account/form-change-password")
     public ResponseEntity<Object> checkPassword(@RequestBody ChangePassword changePassword) {
 
-        final String requestTokenHeader = request.getHeader("Authorization");        
-		String username = null;
-		String jwtToken = null;
+        final String requestTokenHeader = request.getHeader("Authorization");
+        String username = null;
+        String jwtToken = null;
         jwtToken = requestTokenHeader.substring(7);
         username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 
         ResponseChangePassword responChangePassword = userRepository.findUser(username);
 
-       String newPassword = passwordEncoder.encode(changePassword.getNewPassword()); 
+        String newPassword = passwordEncoder.encode(changePassword.getNewPassword());
 
-       changePassword.setNewPassword(newPassword);
+        changePassword.setNewPassword(newPassword);
 
-
-
-        System.out.println("respon cuy " +responChangePassword.getEmail());
+        System.out.println("respon cuy " + responChangePassword.getEmail());
         // harus menggunakan 1x request saja untuk mendapatkan email dan password
         if (responChangePassword.getEmail().equals(null) && responChangePassword.getPassword().equals(null)) {
             return CustomResponse.generate(HttpStatus.OK, "user not found");
         } else if (changePassword.getNewPassword().equals(responChangePassword.getPassword())) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST,
                     "The new password cannot be the same as the old password");
-        } else if (passwordEncoder.matches(changePassword.getOldPassword(),responChangePassword.getPassword())== false) {
+        } else if (passwordEncoder.matches(changePassword.getOldPassword(),
+                responChangePassword.getPassword()) == false) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST, "password does not match");
         } else if (changePassword.getNewPassword().isEmpty() || changePassword.getNewPassword().equals(null)) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST,
@@ -125,23 +117,24 @@ public class AccountRestController {
         return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Register Failed");
     }
 
-
     @PostMapping("account/authenticating")
     public ResponseEntity<Object> login(@RequestBody Login login) {
-        
+
         try {
-            
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
+
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             // myUserDetails.loadUserByUsername(login.getEmail());
 
-            // myUserDetails = (MyUserDetails) myUserDetails.loadUserByUsername(login.getEmail());
+            // myUserDetails = (MyUserDetails)
+            // myUserDetails.loadUserByUsername(login.getEmail());
             UserDetails userDetails = myUserDetails.loadUserByUsername(login.getEmail());
 
-		final String token = jwtTokenUtil.generateToken(userDetails);
+            final String token = jwtTokenUtil.generateToken(userDetails);
 
-		// return ResponseEntity.ok(new JwtResponse(token));
-        return CustomResponse.generate(HttpStatus.OK, "Login Successfully",token);
+            // return ResponseEntity.ok(new JwtResponse(token));
+            return CustomResponse.generate(HttpStatus.OK, "Login Successfully", token);
         } catch (Exception e) {
             return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Login Failed", null);
         }
@@ -151,15 +144,15 @@ public class AccountRestController {
     public ResponseEntity<Object> checkEmail(@RequestBody ForgotPassword forgotPassword) {
         // , @RequestHeader(name = "fp-nsr") String token
         // if (token.equals(parameterRepository.findById("fp-nsr").get().getValue())) {
-            // menggunakan line dibawah ini untuk get data sekaligus dengan cek email
-            User user = userRepository.findUserByEmail(forgotPassword.getEmail());
-            if (user.getEmployee().getEmail().equals(forgotPassword.getEmail())) {
-                user.setPassword(passwordEncoder.encode(forgotPassword.getPassword()));
-                userRepository.save(user);
-                // Method dalam Class CustomResponse dibuat static sehingga hanya perlu
-                // memanggil classnya saja
-                return CustomResponse.generate(HttpStatus.OK, "Your Password has been Reset");
-            }
+        // menggunakan line dibawah ini untuk get data sekaligus dengan cek email
+        User user = userRepository.findUserByEmail(forgotPassword.getEmail());
+        if (user.getEmployee().getEmail().equals(forgotPassword.getEmail())) {
+            user.setPassword(passwordEncoder.encode(forgotPassword.getPassword()));
+            userRepository.save(user);
+            // Method dalam Class CustomResponse dibuat static sehingga hanya perlu
+            // memanggil classnya saja
+            return CustomResponse.generate(HttpStatus.OK, "Your Password has been Reset");
+        }
         // }
         return CustomResponse.generate(HttpStatus.BAD_REQUEST, "Wrong Token");
     }
